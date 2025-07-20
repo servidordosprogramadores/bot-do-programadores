@@ -1,212 +1,178 @@
 const {
-  EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
 } = require("discord.js");
+
 const { setRole } = require("./setRole");
 const { removeRole } = require("./removeRole");
 require("dotenv").config();
 
 const TECHS = [
   {
+    id: "javascript",
     name: "JavaScript",
     emoji: "<:JavaScript:1381370650903445544>",
     roleId: process.env.JAVASCRIPT_ROLE_ID,
   },
   {
+    id: "typescript",
     name: "TypeScript",
     emoji: "<:TypeScript:1381370724568141854>",
     roleId: process.env.TYPESCRIPT_ROLE_ID,
   },
   {
+    id: "html",
     name: "HTML",
     emoji: "<:HTML:1381370851068481647>",
     roleId: process.env.HTML_ROLE_ID,
   },
   {
+    id: "css",
     name: "CSS",
     emoji: "<:CSS:1381370901618233344>",
     roleId: process.env.CSS_ROLE_ID,
   },
-
   {
+    id: "python",
     name: "Python",
     emoji: "<:Python:1381370968374771782>",
     roleId: process.env.PYTHON_ROLE_ID,
   },
   {
+    id: "php",
     name: "PHP",
     emoji: "<:PHP:1381371029078933564>",
     roleId: process.env.PHP_ROLE_ID,
   },
   {
+    id: "java",
     name: "Java",
     emoji: "<:Java:1381371080526004355>",
     roleId: process.env.JAVA_ROLE_ID,
   },
   {
+    id: "cpp",
     name: "C++",
     emoji: "<:CPP:1381371126470676520>",
     roleId: process.env.CPP_ROLE_ID,
   },
   {
+    id: "clang",
     name: "C",
     emoji: "<:C_:1381371177045327892>",
     roleId: process.env.C_ROLE_ID,
   },
   {
+    id: "csharp",
     name: "C#",
     emoji: "<:CSharp:1381371194816856104>",
     roleId: process.env.CSHARP_ROLE_ID,
   },
   {
+    id: "go",
     name: "Go",
     emoji: "<:Go:1381371321950146590>",
     roleId: process.env.GO_ROLE_ID,
   },
   {
+    id: "kotlin",
     name: "Kotlin",
     emoji: "<:Kotlin:1381371358054715555>",
     roleId: process.env.KOTLIN_ROLE_ID,
   },
   {
+    id: "swift",
     name: "Swift",
     emoji: "<:Swift:1381371449373098094>",
     roleId: process.env.SWIFT_ROLE_ID,
   },
   {
+    id: "rust",
     name: "Rust",
     emoji: "<:Rust:1381371519707517009>",
     roleId: process.env.RUST_ROLE_ID,
   },
   {
+    id: "discord",
     name: "Discord",
     emoji: "<:Discord:1381371570441814136>",
     roleId: process.env.DISCORD_ROLE_ID,
   },
 ];
 
-// Função para criar o embed de tecnologias
-function createTechsEmbed() {
+function createTechsLayout() {
   const embed = new EmbedBuilder()
     .setTitle("Painel de Tecnologias")
     .setDescription(
-      "**Selecione abaixo as tecnologias com as quais você se identifica.**\n\n" +
+      "Selecione abaixo as tecnologias com as quais você se identifica.\n\n" +
         "Cada botão **adiciona** ou **remove** um cargo correspondente à tecnologia escolhida.\n" +
-        "Os cargos aparecem no seu perfil e destacam suas preferências dentro do servidor.\n" +
-        "-# Use os botões para atualizar sua seleção quando quiser.\n"
+        "Os cargos aparecem no seu perfil e destacam suas preferências dentro do servidor.\n\n" +
+        "_Use os botões para atualizar sua seleção quando quiser._"
     )
+    .setColor("#ffffff");
 
-    .setColor(0x738ad8);
+  const actionRows = [];
 
-  return embed;
-}
-
-function createTechButtons() {
-  const rows = [];
-
-  const numRows = Math.ceil(TECHS.length / 5);
-
-  for (let i = 0; i < numRows; i++) {
+  // Dividir tecnologias em grupos de 5 (máximo por ActionRow)
+  for (let i = 0; i < TECHS.length; i += 5) {
+    const techGroup = TECHS.slice(i, i + 5);
     const row = new ActionRowBuilder();
 
-    const startIndex = i * 5;
-    const techsForRow = TECHS.slice(startIndex, startIndex + 5);
+    techGroup.forEach((tech) => {
+      const button = new ButtonBuilder()
+        .setCustomId(`tech_${tech.id}`)
+        .setLabel(tech.name)
+        .setEmoji(tech.emoji.replace(/[<>]/g, ""))
+        .setStyle(ButtonStyle.Secondary);
 
-    techsForRow.forEach((tech) => {
-      row.addComponents(
-        new ButtonBuilder()
-          .setCustomId(`tech_${tech.name.toLowerCase().replace(/[\s,.]/g, "")}`) // Remove espaços, vírgulas e pontos
-          .setLabel(tech.name)
-          .setEmoji(tech.emoji.replace(/[<>]/g, ""))
-          .setStyle(ButtonStyle.Secondary)
-      );
+      row.addComponents(button);
     });
 
-    rows.push(row);
+    actionRows.push(row);
   }
 
-  return rows;
+  return { embed, actionRows };
 }
 
 async function handleTechButtonClick(interaction) {
   const customId = interaction.customId;
-
   if (!customId.startsWith("tech_")) return;
 
-  const techName = customId.replace("tech_", "");
-  const tech = TECHS.find(
-    (t) => t.name.toLowerCase().replace(/[\s,.]/g, "") === techName
-  );
-
+  const techId = customId.replace("tech_", "");
+  const tech = TECHS.find((t) => t.id === techId);
   if (!tech) return;
 
-  // Verificar se a interação já foi respondida ou expirou
-  if (interaction.replied || interaction.deferred) {
-    console.log("Interação já foi respondida ou está diferida");
-    return;
-  }
-
-  // Deferimos a interação para evitar o erro de tempo limite
   try {
     await interaction.deferReply({ ephemeral: true });
-  } catch (error) {
-    console.error("Erro ao deferir a interação:", error);
-    return; // Se não conseguirmos deferir, é porque a interação já expirou
-  }
-
-  const member = interaction.member;
-  const hasRole = member.roles.cache.has(tech.roleId);
-
-  try {
+    const member = interaction.member;
+    const hasRole = member.roles.cache.has(tech.roleId);
     const role = interaction.guild.roles.cache.get(tech.roleId);
 
     if (hasRole) {
       await removeRole(member, tech.roleId);
-
-      const embed = new EmbedBuilder()
-        .setColor(0x111214)
-        .setDescription(`Cargo ${role} removido do seu perfil.`);
-
       await interaction.editReply({
-        embeds: [embed],
+        content: `Cargo ${role} removido do seu perfil.`,
         ephemeral: true,
       });
     } else {
       await setRole(member, tech.roleId);
-
-      const embed = new EmbedBuilder()
-        .setColor(0x111214)
-        .setDescription(`Cargo ${role} adicionado ao seu perfil.`);
-
       await interaction.editReply({
-        embeds: [embed],
+        content: `Cargo ${role} adicionado ao seu perfil.`,
         ephemeral: true,
       });
     }
   } catch (error) {
-    console.error(`Erro ao gerenciar cargo ${tech.name}:`, error);
-
-    const errorEmbed = new EmbedBuilder()
-      .setColor(0x111214)
-      .setTitle(`Erro ao gerenciar cargo`)
-      .setDescription(
-        `Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
-      );
-
-    try {
-      await interaction.editReply({
-        embeds: [errorEmbed],
-        ephemeral: true,
-      });
-    } catch (replyError) {
-      console.error("Erro ao responder com erro para o usuário:", replyError);
-    }
+    console.error(`Erro ao lidar com ${tech.name}:`, error);
+    await interaction.editReply({
+      content: `Ocorreu um erro ao processar sua ação.`,
+      ephemeral: true,
+    });
   }
 }
 
-async function sendTechEmbed(client) {
+async function sendTechLayoutMessage(client) {
   try {
     const techsChannel = await client.channels.fetch(
       process.env.TECHS_CHANNEL_ID
@@ -217,39 +183,20 @@ async function sendTechEmbed(client) {
       await techsChannel.bulkDelete(messages);
     }
 
-    const guild = techsChannel.guild;
-    // Garante que serverName seja uma string, com um fallback.
-    const serverName = guild.name
-      ? String(guild.name)
-      : "Servidor dos Programadores";
-
-    // Garante que serverIcon seja uma string (URL do ícone) ou null.
-    const rawIcon = guild.iconURL({ dynamic: true });
-    const serverIcon =
-      rawIcon === undefined || rawIcon === null ? null : String(rawIcon);
-
-    const embed = createTechsEmbed();
-
-    embed.setFooter({
-      text: serverName,
-      iconURL: serverIcon,
-    });
-
-    const buttons = createTechButtons();
-
+    const { embed, actionRows } = createTechsLayout();
     await techsChannel.send({
       embeds: [embed],
-      components: buttons,
+      components: actionRows,
     });
 
-    console.log("Embed de tecnologias enviado com sucesso!");
+    console.log("Painel de tecnologias enviado com sucesso!");
   } catch (error) {
-    console.error("Erro ao enviar embed de tecnologias:", error);
+    console.error("Erro ao enviar painel de tecnologias:", error);
   }
 }
 
 module.exports = {
   TECHS,
   handleTechButtonClick,
-  sendTechEmbed,
+  sendTechLayoutMessage,
 };

@@ -2,14 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Client, GatewayIntentBits, Events } = require("discord.js");
-const { handleTechButtonClick, sendTechEmbed } = require("./src/techs/techs");
+const {
+  handleTechButtonClick,
+  sendTechLayoutMessage,
+} = require("./src/techs/techs");
 const {
   handleColorSelectClick,
   sendColorEmbed,
 } = require("./src/colors/colors");
-const { handleBoost } = require("./src/messages/booster");
-const { startRandomMessageInterval } = require("./src/messages/random");
-
 // Criar app Express
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,9 +45,8 @@ client.once(Events.ClientReady, async (readyClient) => {
       return;
     }
 
-    await sendTechEmbed(readyClient);
+    await sendTechLayoutMessage(readyClient);
     await sendColorEmbed(readyClient);
-    startRandomMessageInterval(readyClient);
   } catch (error) {
     console.error("Erro ao processar informações do servidor:", error);
   }
@@ -59,13 +58,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await handleTechButtonClick(interaction);
   } else if (interaction.isStringSelectMenu()) {
     await handleColorSelectClick(interaction);
-  }
-});
-
-// Manipular evento de boost
-client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
-  if (!oldMember.premiumSince && newMember.premiumSince) {
-    await handleBoost(newMember);
   }
 });
 

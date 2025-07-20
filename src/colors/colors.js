@@ -159,8 +159,7 @@ function createColorsEmbed() {
   const embed = new EmbedBuilder()
     .setTitle("Paleta de Cores")
     .setDescription(descriptionText)
-    .setColor(0x738ad8);
-
+    .setColor("#ffffff");
   const standardColors = COLORS.filter(
     (color) => !color.isPremium && !color.isDiscordColor
   );
