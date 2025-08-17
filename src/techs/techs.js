@@ -116,7 +116,6 @@ function createTechsLayoutV2() {
 
   container.addTextDisplayComponents(text1, text2, text3);
 
-  // Agrupa botões em ActionRows de até 5 por linha
   for (let i = 0; i < TECHS.length; i += 5) {
     const techGroup = TECHS.slice(i, i + 5);
     const row = new ActionRowBuilder();

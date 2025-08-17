@@ -23,7 +23,6 @@ const client = new Client({
 client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Bot conectado como ${readyClient.user.tag}`);
   readyClient.user.setActivity("Membros 💙", { type: 3 });
-  readyClient.user.setStatus("dnd");
 
   try {
     const guild = readyClient.guilds.cache.first();
