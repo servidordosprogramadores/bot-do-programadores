@@ -1,10 +1,11 @@
 const {
-  ActionRowBuilder,
+  TextDisplayBuilder,
+  MessageFlags,
+  ContainerBuilder,
   ButtonBuilder,
-  EmbedBuilder,
   ButtonStyle,
+  ActionRowBuilder,
 } = require("discord.js");
-
 const { setRole } = require("./setRole");
 const { removeRole } = require("./removeRole");
 require("dotenv").config();
@@ -102,20 +103,20 @@ const TECHS = [
   },
 ];
 
-function createTechsLayout() {
-  const embed = new EmbedBuilder()
-    .setTitle("Painel de Tecnologias")
-    .setDescription(
-      "Selecione abaixo as tecnologias com as quais você se identifica.\n\n" +
-        "Cada botão **adiciona** ou **remove** um cargo correspondente à tecnologia escolhida.\n" +
-        "Os cargos aparecem no seu perfil e destacam suas preferências dentro do servidor.\n\n" +
-        "_Use os botões para atualizar sua seleção quando quiser._"
-    )
-    .setColor("#ffffff");
+function createTechsLayoutV2() {
+  const container = new ContainerBuilder();
 
-  const actionRows = [];
+  const text1 = new TextDisplayBuilder().setContent("# Painel de Tecnologias");
+  const text2 = new TextDisplayBuilder().setContent(
+    "-# Selecione abaixo as tecnologias com as quais você se identifica."
+  );
+  const text3 = new TextDisplayBuilder().setContent(
+    "Cada botão **adiciona** ou **remove** um cargo correspondente à tecnologia escolhida. Os cargos aparecem no seu perfil e destacam suas preferências dentro do servidor.\n"
+  );
 
-  // Dividir tecnologias em grupos de 5 (máximo por ActionRow)
+  container.addTextDisplayComponents(text1, text2, text3);
+
+  // Agrupa botões em ActionRows de até 5 por linha
   for (let i = 0; i < TECHS.length; i += 5) {
     const techGroup = TECHS.slice(i, i + 5);
     const row = new ActionRowBuilder();
@@ -124,16 +125,16 @@ function createTechsLayout() {
       const button = new ButtonBuilder()
         .setCustomId(`tech_${tech.id}`)
         .setLabel(tech.name)
-        .setEmoji(tech.emoji.replace(/[<>]/g, ""))
+        .setEmoji(tech.emoji)
         .setStyle(ButtonStyle.Secondary);
 
       row.addComponents(button);
     });
 
-    actionRows.push(row);
+    container.addActionRowComponents(row);
   }
 
-  return { embed, actionRows };
+  return container;
 }
 
 async function handleTechButtonClick(interaction) {
@@ -152,21 +153,45 @@ async function handleTechButtonClick(interaction) {
 
     if (hasRole) {
       await removeRole(member, tech.roleId);
+
+      const container = new ContainerBuilder();
+      const text = new TextDisplayBuilder().setContent(
+        `Cargo ${role} removido do seu perfil.`
+      );
+      container.addTextDisplayComponents(text);
+
       await interaction.editReply({
-        content: `Cargo ${role} removido do seu perfil.`,
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
         ephemeral: true,
       });
     } else {
       await setRole(member, tech.roleId);
+
+      const container = new ContainerBuilder();
+      const text = new TextDisplayBuilder().setContent(
+        `Cargo ${role} adicionado ao seu perfil.`
+      );
+      container.addTextDisplayComponents(text);
+
       await interaction.editReply({
-        content: `Cargo ${role} adicionado ao seu perfil.`,
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
         ephemeral: true,
       });
     }
   } catch (error) {
     console.error(`Erro ao lidar com ${tech.name}:`, error);
+
+    const container = new ContainerBuilder();
+    const text = new TextDisplayBuilder().setContent(
+      `Ocorreu um erro ao processar sua ação.`
+    );
+    container.addTextDisplayComponents(text);
+
     await interaction.editReply({
-      content: `Ocorreu um erro ao processar sua ação.`,
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
       ephemeral: true,
     });
   }
@@ -183,10 +208,10 @@ async function sendTechLayoutMessage(client) {
       await techsChannel.bulkDelete(messages);
     }
 
-    const { embed, actionRows } = createTechsLayout();
+    const container = createTechsLayoutV2();
     await techsChannel.send({
-      embeds: [embed],
-      components: actionRows,
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
     });
 
     console.log("Painel de tecnologias enviado com sucesso!");
