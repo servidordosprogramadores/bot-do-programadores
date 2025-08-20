@@ -11,10 +11,11 @@ const { removeRole } = require("../techs/removeRole");
 require("dotenv").config();
 
 const PREMIUM_PERMISSION_ROLE_IDS = [
+  process.env.BOOSTER_ROLE_ID,
+  process.env.APOIADOR_ROLE_ID,
   process.env.ATIVO_ROLE_ID,
   process.env.VIRAL_ROLE_ID,
   process.env.FAMOSO_ID,
-  process.env.APOIADOR_ROLE_ID,
   process.env.CRIADOR_ROLE_ID,
   process.env.AMIGO_ROLE_ID,
 ].filter(Boolean);
@@ -283,7 +284,7 @@ async function handleColorSelectClick(interaction) {
           const container = new ContainerBuilder();
           container.addTextDisplayComponents(
             new TextDisplayBuilder().setContent(
-              `Para selecionar uma cor premium, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.`
+              `Para selecionar uma **cor premium**, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.`
             )
           );
           await interaction.editReply({
