@@ -1,8 +1,10 @@
 const {
-  EmbedBuilder,
-  ActionRowBuilder,
+  TextDisplayBuilder,
+  MessageFlags,
+  ContainerBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  ActionRowBuilder,
 } = require("discord.js");
 const { setRole } = require("../techs/setRole");
 const { removeRole } = require("../techs/removeRole");
@@ -10,14 +12,12 @@ require("dotenv").config();
 
 const PREMIUM_PERMISSION_ROLE_IDS = [
   process.env.ATIVO_ROLE_ID,
-  process.env.RARO_ROLE_ID,
-  process.env.CODA_FOFO_ROLE_ID,
-  process.env.HACKER_ROLE_ID,
-  process.env.LENDARIO_ROLE_ID,
-  process.env.BOOSTER_ROLE_ID,
+  process.env.VIRAL_ROLE_ID,
+  process.env.FAMOSO_ID,
   process.env.APOIADOR_ROLE_ID,
   process.env.CRIADOR_ROLE_ID,
-].filter(Boolean); // Filtra IDs nulos/undefined se não estiverem no .env
+  process.env.AMIGO_ROLE_ID,
+].filter(Boolean);
 
 const COLORS = [
   // Cores Padrões
@@ -76,7 +76,7 @@ const COLORS = [
     isDiscordColor: false,
   },
 
-  // Cores Discord
+  // Cores Especiais
   {
     name: "Discord",
     roleId: process.env.DISCORD_BLUE_ROLE_ID,
@@ -147,75 +147,15 @@ const COLORS = [
   },
 ];
 
-// Função para criar o embed de cores
-function createColorsEmbed() {
-  const descriptionText =
-    "**Selecione sua cor preferida no menu abaixo.**\n\n" +
-    "Você pode ter apenas **uma cor**. \n" +
-    "Ao escolher uma nova cor, a anterior será removida automaticamente.\n" +
-    "Para ficar sem cor, selecione a opção *Remover Cor*.\n" +
-    "-# Use o menu para alterar sua cor quando quiser.\n\n";
-
-  const embed = new EmbedBuilder()
-    .setTitle("Paleta de Cores")
-    .setDescription(descriptionText)
-    .setColor("#ffffff");
-  const standardColors = COLORS.filter(
-    (color) => !color.isPremium && !color.isDiscordColor
-  );
-  const discordColors = COLORS.filter(
-    (color) => color.isDiscordColor && !color.isPremium
-  );
-  const premiumColors = COLORS.filter((color) => color.isPremium);
-
-  let standardColorsField = "";
-  standardColors.forEach((color) => {
-    if (color.roleId) standardColorsField += `<@&${color.roleId}>\n`;
-  });
-
-  let discordColorsField = "";
-  discordColors.forEach((color) => {
-    if (color.roleId) discordColorsField += `<@&${color.roleId}>\n`;
-  });
-
-  let premiumColorsField = "";
-  premiumColors.forEach((color) => {
-    if (color.roleId) premiumColorsField += `<@&${color.roleId}>\n`;
-  });
-
-  embed.addFields(
-    {
-      name: "Cores __Padrões__:",
-      value: standardColorsField || "Nenhuma cor padrão disponível.",
-      inline: true,
-    },
-    {
-      name: "Cores do __Discord__:",
-      value: discordColorsField || "Nenhuma cor Discord disponível.",
-      inline: true,
-    },
-    {
-      name: "Cores __Premium__:",
-      value: premiumColorsField || "Nenhuma cor premium disponível.",
-      inline: true, // Mantido inline para consistência, pode ser false se a lista for longa
-    }
-  );
-
-  return embed;
-}
-
-function createColorSelectMenu() {
+function createColorSelectMenuV2() {
   const removeColorOption = new StringSelectMenuOptionBuilder()
     .setLabel("Remover Cor")
     .setValue("remove_color_option");
 
-  const colorOptions = COLORS.filter((c) => c.roleId).map(
-    (
-      color // Filtra cores sem roleId definido
-    ) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(color.name)
-        .setValue(`color_${color.name.toLowerCase().replace(/\s/g, "")}`)
+  const colorOptions = COLORS.filter((c) => c.roleId).map((color) =>
+    new StringSelectMenuOptionBuilder()
+      .setLabel(color.name)
+      .setValue(`color_${color.name.toLowerCase().replace(/\s/g, "")}`)
   );
 
   const options = [removeColorOption, ...colorOptions];
@@ -226,6 +166,31 @@ function createColorSelectMenu() {
     .addOptions(options);
 
   return new ActionRowBuilder().addComponents(selectMenu);
+}
+
+function createColorsContainerV2() {
+  const container = new ContainerBuilder().setAccentColor(16717077);
+
+  const text1 = new TextDisplayBuilder().setContent("# Paleta de Cores");
+  const text2 = new TextDisplayBuilder().setContent(
+    "-# Selecione abaixo a sua cor preferida."
+  );
+  const text3 = new TextDisplayBuilder().setContent(
+    "Use o menu de seleção para **adicionar** ou **remover** uma cor. A cor aparece no seu perfil e destaca seu nome no servidor."
+  );
+  const text4 = new TextDisplayBuilder()
+    .setContent(`**Cores padrões**: <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>, <@&1381471579287847002>, <@&1381471716462694502>.
+
+**Cores especiais**: <@&1381442335468032050>, <@&1381442379994763285>, <@&1381442246922211338>, <@&1381442273237008495>.
+
+**Cores premium**: <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>, <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`);
+
+  container.addTextDisplayComponents(text1, text2, text3, text4);
+
+  const selectMenuRow = createColorSelectMenuV2();
+  container.addActionRowComponents(selectMenuRow);
+
+  return container;
 }
 
 async function handleColorSelectClick(interaction) {
@@ -260,17 +225,20 @@ async function handleColorSelectClick(interaction) {
         }
       }
 
-      if (removedCount > 0) {
-        const embed = new EmbedBuilder()
-          .setColor(0x111214)
-          .setDescription("Sua cor foi removida.");
-        await interaction.editReply({ embeds: [embed], ephemeral: true });
-      } else {
-        const embed = new EmbedBuilder()
-          .setColor(0x111214)
-          .setDescription("Você não possui uma cor para remover.");
-        await interaction.editReply({ embeds: [embed], ephemeral: true });
-      }
+      const container = new ContainerBuilder();
+      let msg =
+        removedCount > 0
+          ? "Sua cor foi removida."
+          : "Você não possui uma cor para remover.";
+      container.addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(msg)
+      );
+
+      await interaction.editReply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
+        ephemeral: true,
+      });
     } else {
       const colorName = selectedValue.replace("color_", "");
       const selectedColor = COLORS.find(
@@ -278,14 +246,20 @@ async function handleColorSelectClick(interaction) {
       );
 
       if (!selectedColor) {
+        const container = new ContainerBuilder();
+        container.addTextDisplayComponents(
+          new TextDisplayBuilder().setContent(
+            "Cor inválida selecionada ou não encontrada."
+          )
+        );
         await interaction.editReply({
-          content: "Cor inválida selecionada ou não encontrada.",
+          flags: MessageFlags.IsComponentsV2,
+          components: [container],
           ephemeral: true,
         });
         return;
       }
 
-      // Verificar permissão para cores premium
       if (selectedColor.isPremium) {
         const hasPermission = PREMIUM_PERMISSION_ROLE_IDS.some(
           (permissionRoleId) => member.roles.cache.has(permissionRoleId)
@@ -306,21 +280,21 @@ async function handleColorSelectClick(interaction) {
             }
           }
 
-          const rolesChannelMention = process.env.ROLES_CHANNEL_ID
-            ? `<#${process.env.ROLES_CHANNEL_ID}>`
-            : "o canal de cargos";
-
-          const embed = new EmbedBuilder()
-            .setColor(0x111214)
-            .setDescription(
-              `Para selecionar uma cor premium, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.\nSaiba como obtê-los em ${rolesChannelMention}.`
-            );
-          await interaction.editReply({ embeds: [embed], ephemeral: true });
+          const container = new ContainerBuilder();
+          container.addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(
+              `Para selecionar uma cor premium, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.`
+            )
+          );
+          await interaction.editReply({
+            flags: MessageFlags.IsComponentsV2,
+            components: [container],
+            ephemeral: true,
+          });
           return;
         }
       }
 
-      // Remover todas as cores existentes do usuário antes de adicionar a nova
       for (const color of COLORS) {
         if (
           color.roleId &&
@@ -331,26 +305,37 @@ async function handleColorSelectClick(interaction) {
         }
       }
 
-      // Adicionar a nova cor selecionada (se ainda não a tiver)
       if (!member.roles.cache.has(selectedColor.roleId)) {
         await setRole(member, selectedColor.roleId);
       }
 
       const role = interaction.guild.roles.cache.get(selectedColor.roleId);
-      const embed = new EmbedBuilder()
-        .setColor(0x111214) // Usar a cor do cargo selecionado ou uma cor padrão
-        .setDescription(`Cargo ${role} adicionado ao seu perfil.`);
-      await interaction.editReply({ embeds: [embed], ephemeral: true });
+      const container = new ContainerBuilder();
+      container.addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(
+          `Cargo ${role} adicionado ao seu perfil.`
+        )
+      );
+      await interaction.editReply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
+        ephemeral: true,
+      });
     }
   } catch (error) {
     console.error(`Erro ao gerenciar cor:`, error);
-    const errorEmbed = new EmbedBuilder()
-      .setColor(0x111214)
-      .setDescription(
+    const container = new ContainerBuilder();
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(
         `Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
-      );
+      )
+    );
     try {
-      await interaction.editReply({ embeds: [errorEmbed], ephemeral: true });
+      await interaction.editReply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
+        ephemeral: true,
+      });
     } catch (replyError) {
       console.error("Erro ao responder com erro para o usuário:", replyError);
     }
@@ -368,34 +353,16 @@ async function sendColorEmbed(client) {
       await colorsChannel.bulkDelete(messages);
     }
 
-    const guild = colorsChannel.guild;
-    // Garante que serverName seja uma string, com um fallback.
-    const serverName = guild.name
-      ? String(guild.name)
-      : "Servidor dos Programadores";
-
-    // Garante que serverIcon seja uma string (URL do ícone) ou null.
-    const rawIcon = guild.iconURL({ dynamic: true });
-    const serverIcon =
-      rawIcon === undefined || rawIcon === null ? null : String(rawIcon);
-
-    const embed = createColorsEmbed();
-
-    embed.setFooter({
-      text: serverName,
-      iconURL: serverIcon,
-    });
-
-    const selectMenu = createColorSelectMenu();
+    const container = createColorsContainerV2();
 
     await colorsChannel.send({
-      embeds: [embed],
-      components: [selectMenu],
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
     });
 
-    console.log("Embed de cores enviado com sucesso!");
+    console.log("Painel de cores enviado com sucesso!");
   } catch (error) {
-    console.error("Erro ao enviar embed de cores:", error);
+    console.error("Erro ao enviar painel de cores:", error);
   }
 }
 
