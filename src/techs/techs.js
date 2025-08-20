@@ -104,7 +104,7 @@ const TECHS = [
 ];
 
 function createTechsLayoutV2() {
-  const container = new ContainerBuilder();
+  const container = new ContainerBuilder().setAccentColor(16773909);
 
   const text1 = new TextDisplayBuilder().setContent("# Painel de Tecnologias");
   const text2 = new TextDisplayBuilder().setContent(
