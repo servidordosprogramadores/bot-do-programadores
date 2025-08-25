@@ -5,7 +5,6 @@ async function addSupporterRole(member) {
     throw new Error("Membro inválido para adicionar cargo");
 
   const guildMember = member;
-  // Verifica se já tem o cargo
   if (guildMember.roles.cache.has(APOIADOR_ROLE_ID)) return false;
 
   try {

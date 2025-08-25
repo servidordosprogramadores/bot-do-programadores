@@ -10,8 +10,10 @@ const LIVEPIX_API_BASE =
   process.env.LIVEPIX_API_BASE || "https://api.livepix.gg/v2";
 const CLIENT_ID = process.env.LIVEPIX_CLIENT_ID;
 const CLIENT_SECRET = process.env.LIVEPIX_CLIENT_SECRET;
-const SUPPORTER_THRESHOLD_CENTS =
-  parseInt(process.env.LIVEPIX_SUPPORTER_THRESHOLD_CENTS, 10) || 1000; // default R$10,00 = 1000 cents
+const SUPPORTER_THRESHOLD_CENTS = parseInt(
+  process.env.LIVEPIX_SUPPORTER_THRESHOLD_CENTS,
+  10
+);
 
 async function getAccessToken() {
   if (!CLIENT_ID || !CLIENT_SECRET) {
@@ -24,7 +26,6 @@ async function getAccessToken() {
     process.env.LIVEPIX_TOKEN_AUTH_METHOD || "client_secret_post"
   ).toLowerCase();
 
-  // dados comuns
   const data = {
     grant_type: "client_credentials",
     scope: "messages:read",
@@ -33,7 +34,6 @@ async function getAccessToken() {
   try {
     let resp;
     if (authMethod === "client_secret_basic") {
-      // método alternativo (se configurado explicitamente)
       const basicAuth = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString(
         "base64"
       );
@@ -44,7 +44,6 @@ async function getAccessToken() {
         },
       });
     } else {
-      // client_secret_post (padrão): enviar client_id e client_secret no corpo
       data.client_id = CLIENT_ID;
       data.client_secret = CLIENT_SECRET;
       resp = await axios.post(LIVEPIX_TOKEN_URL, qs.stringify(data), {
@@ -64,7 +63,6 @@ async function getAccessToken() {
       err.response?.status,
       err.response?.data || err.message
     );
-    // lançar para o fluxo principal tratar e responder o webhook com erro
     throw err;
   }
 }
@@ -87,7 +85,6 @@ async function handleLivepixWebhook(reqBody, res, client) {
     if (!reqBody)
       return res.status(400).json({ error: "Nenhum dado recebido" });
 
-    // Filtra eventos que não interessam
     if (reqBody.event !== "new" || reqBody.resource?.type !== "message") {
       return res.json({ status: "evento ignorado" });
     }
@@ -95,22 +92,19 @@ async function handleLivepixWebhook(reqBody, res, client) {
     const messageId = reqBody.resource.id;
     if (!messageId) return res.status(400).json({ error: "messageId ausente" });
 
-    // Obtém detalhes da transação
     const token = await getAccessToken();
     const messageData = await fetchMessageDetails(messageId, token);
 
-    const username = messageData.username || "Desconhecido"; // nome apresentado (pode ser username#0000)
+    const username = messageData.username || "Desconhecido";
     const text = messageData.message || "";
     const amountCents = messageData.amount || 0;
 
-    // Resolve guild e membro no primeiro servidor do bot
     const guild = client.guilds.cache.first();
     let member = null;
     let memberId = null;
 
     if (guild) {
       try {
-        // busca por query (pode retornar username/displayName)
         const found = await guild.members.fetch({ query: username, limit: 1 });
         member = found.first() || null;
       } catch (err) {
@@ -118,7 +112,6 @@ async function handleLivepixWebhook(reqBody, res, client) {
       }
 
       if (!member) {
-        // Tenta buscar pelo formato username#discriminator se informado
         if (username.includes("#")) {
           const [name, discrim] = username.split("#");
           try {
@@ -137,10 +130,8 @@ async function handleLivepixWebhook(reqBody, res, client) {
       if (member) memberId = member.id;
     }
 
-    // Monta menção (se possível usar <@id>, caso contrário usar o nome)
     const mentionText = memberId ? `<@${memberId}>` : `@${username}`;
 
-    // Se doação >= limite, adiciona cargo de apoiador
     let roleGiven = false;
     if (amountCents >= SUPPORTER_THRESHOLD_CENTS && member) {
       try {
@@ -150,14 +141,12 @@ async function handleLivepixWebhook(reqBody, res, client) {
       }
     }
 
-    // Envia mensagem de agradecimento para o webhook do chat
     try {
-      await sendThankYou(mentionText, amountCents, username, memberId);
+      await sendThankYou(amountCents, username, memberId, text);
     } catch (err) {
       console.error("Erro ao enviar mensagem de agradecimento:", err);
     }
 
-    // Envia log para o webhook de logs (embed)
     try {
       await sendDonationLog({
         messageId,

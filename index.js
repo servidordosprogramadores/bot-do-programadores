@@ -56,19 +56,15 @@ client
     console.error("Erro ao fazer login:", error);
   });
 
-// Substitui o servidor HTTP simples pelo Express para expor o endpoint
 const app = express();
 app.use(bodyParser.json());
 
-// Healthcheck
 app.get("/", (req, res) =>
-  res.status(200).send("OK - Servidor dos Programadores\n")
+  res.status(200).send("OK - Servidor dos Programadores")
 );
 
-// Endpoint LivePix delegando para módulo de mensagens (passa o client)
 app.post("/livepix-webhook", async (req, res) => {
   try {
-    // handleLivepixWebhook espera (reqBody, resObj, client)
     await handleLivepixWebhook(req.body, res, client);
   } catch (err) {
     console.error("Erro no endpoint /livepix-webhook:", err);
@@ -76,7 +72,6 @@ app.post("/livepix-webhook", async (req, res) => {
   }
 });
 
-// Inicia Express na porta definida em ENV (fallback 80)
 const PORT = parseInt(process.env.PORT, 10) || 80;
 app.listen(PORT, () => {
   console.log(`Servidor Express ouvindo na porta ${PORT}`);
