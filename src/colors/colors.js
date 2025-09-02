@@ -4,7 +4,9 @@ const {
   ContainerBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  ThumbnailBuilder,
   ActionRowBuilder,
+  SectionBuilder,
 } = require("discord.js");
 const { setRole } = require("../techs/setRole");
 const { removeRole } = require("../techs/removeRole");
@@ -172,6 +174,12 @@ function createColorSelectMenuV2() {
 function createColorsContainerV2() {
   const container = new ContainerBuilder().setAccentColor(16717077);
 
+  const thumbnail = new ThumbnailBuilder({
+    media: {
+      url: "https://cdn3.emoji.gg/temp/68b63438404043.06536795_fpohmkjgielqn.png",
+    },
+  });
+
   const text1 = new TextDisplayBuilder().setContent("# Paleta de Cores");
   const text2 = new TextDisplayBuilder().setContent(
     "-# Selecione abaixo a sua cor preferida."
@@ -180,6 +188,12 @@ function createColorsContainerV2() {
     "Use o menu de seleção para **adicionar** ou **remover** uma cor. A cor aparece no seu perfil e destaca seu nome no servidor."
   );
 
+  const section = new SectionBuilder()
+    .addTextDisplayComponents(text1, text2, text3)
+    .setThumbnailAccessory(thumbnail);
+
+  container.addSectionComponents(section);
+
   const text4 = new TextDisplayBuilder()
     .setContent(`**Cores padrões**: <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>, <@&1381471579287847002>, <@&1381471716462694502>.
 
@@ -187,7 +201,7 @@ function createColorsContainerV2() {
 
   **Cores premium**: <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>, <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`);
 
-  container.addTextDisplayComponents(text1, text2, text3, text4);
+  container.addTextDisplayComponents(text4);
 
   const selectMenuRow = createColorSelectMenuV2();
   container.addActionRowComponents(selectMenuRow);

@@ -5,6 +5,8 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
+  ThumbnailBuilder,
+  SectionBuilder,
 } = require("discord.js");
 const { setRole } = require("./setRole");
 const { removeRole } = require("./removeRole");
@@ -106,6 +108,12 @@ const TECHS = [
 function createTechsLayoutV2() {
   const container = new ContainerBuilder().setAccentColor(16773909);
 
+  const thumbnail = new ThumbnailBuilder({
+    media: {
+      url: "https://cdn3.emoji.gg/temp/68b63051705811.15664017_kgjohqlemnpif.png",
+    },
+  });
+
   const text1 = new TextDisplayBuilder().setContent("# Painel de Tecnologias");
   const text2 = new TextDisplayBuilder().setContent(
     "-# Selecione abaixo as tecnologias com as quais você se identifica."
@@ -114,7 +122,11 @@ function createTechsLayoutV2() {
     "Cada botão **adiciona** ou **remove** um cargo correspondente à tecnologia escolhida. Os cargos aparecem no seu perfil e destacam suas preferências dentro do servidor.\n"
   );
 
-  container.addTextDisplayComponents(text1, text2, text3);
+  const section = new SectionBuilder()
+    .addTextDisplayComponents(text1, text2, text3)
+    .setThumbnailAccessory(thumbnail);
+
+  container.addSectionComponents(section);
 
   for (let i = 0; i < TECHS.length; i += 5) {
     const techGroup = TECHS.slice(i, i + 5);
