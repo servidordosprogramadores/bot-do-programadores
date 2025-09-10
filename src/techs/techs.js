@@ -5,8 +5,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
-  ThumbnailBuilder,
-  SectionBuilder,
+  MediaGalleryBuilder,
 } = require("discord.js");
 const { setRole } = require("./setRole");
 const { removeRole } = require("./removeRole");
@@ -20,46 +19,16 @@ const TECHS = [
     roleId: process.env.JAVASCRIPT_ROLE_ID,
   },
   {
-    id: "typescript",
-    name: "TypeScript",
-    emoji: "<:TypeScript:1381370724568141854>",
-    roleId: process.env.TYPESCRIPT_ROLE_ID,
-  },
-  {
-    id: "html",
-    name: "HTML",
-    emoji: "<:HTML:1381370851068481647>",
-    roleId: process.env.HTML_ROLE_ID,
-  },
-  {
-    id: "css",
-    name: "CSS",
-    emoji: "<:CSS:1381370901618233344>",
-    roleId: process.env.CSS_ROLE_ID,
-  },
-  {
     id: "python",
     name: "Python",
     emoji: "<:Python:1381370968374771782>",
     roleId: process.env.PYTHON_ROLE_ID,
   },
   {
-    id: "php",
-    name: "PHP",
-    emoji: "<:PHP:1381371029078933564>",
-    roleId: process.env.PHP_ROLE_ID,
-  },
-  {
     id: "java",
     name: "Java",
     emoji: "<:Java:1381371080526004355>",
     roleId: process.env.JAVA_ROLE_ID,
-  },
-  {
-    id: "cpp",
-    name: "C++",
-    emoji: "<:CPP:1381371126470676520>",
-    roleId: process.env.CPP_ROLE_ID,
   },
   {
     id: "clang",
@@ -72,6 +41,24 @@ const TECHS = [
     name: "C#",
     emoji: "<:CSharp:1381371194816856104>",
     roleId: process.env.CSHARP_ROLE_ID,
+  },
+  {
+    id: "cpp",
+    name: "C++",
+    emoji: "<:CPP:1381371126470676520>",
+    roleId: process.env.CPP_ROLE_ID,
+  },
+  {
+    id: "typescript",
+    name: "TypeScript",
+    emoji: "<:TypeScript:1381370724568141854>",
+    roleId: process.env.TYPESCRIPT_ROLE_ID,
+  },
+  {
+    id: "php",
+    name: "PHP",
+    emoji: "<:PHP:1381371029078933564>",
+    roleId: process.env.PHP_ROLE_ID,
   },
   {
     id: "go",
@@ -98,6 +85,18 @@ const TECHS = [
     roleId: process.env.RUST_ROLE_ID,
   },
   {
+    id: "html",
+    name: "HTML",
+    emoji: "<:HTML:1381370851068481647>",
+    roleId: process.env.HTML_ROLE_ID,
+  },
+  {
+    id: "css",
+    name: "CSS",
+    emoji: "<:CSS:1381370901618233344>",
+    roleId: process.env.CSS_ROLE_ID,
+  },
+  {
     id: "discord",
     name: "Discord",
     emoji: "<:Discord:1381371570441814136>",
@@ -106,27 +105,26 @@ const TECHS = [
 ];
 
 function createTechsLayoutV2() {
-  const container = new ContainerBuilder().setAccentColor(16773909);
+  const container = new ContainerBuilder().setAccentColor(1379773);
 
-  const thumbnail = new ThumbnailBuilder({
-    media: {
-      url: "https://cdn3.emoji.gg/temp/68b63051705811.15664017_kgjohqlemnpif.png",
+  const media = new MediaGalleryBuilder().addItems([
+    {
+      media: {
+        url: "https://i.postimg.cc/XJ9cgtR7/PROGRAMADORES5.png",
+      },
     },
-  });
+  ]);
 
   const text1 = new TextDisplayBuilder().setContent("# Painel de Tecnologias");
   const text2 = new TextDisplayBuilder().setContent(
     "-# Selecione abaixo as tecnologias com as quais você se identifica."
   );
   const text3 = new TextDisplayBuilder().setContent(
-    "Cada botão **adiciona** ou **remove** um cargo correspondente à tecnologia escolhida. Os cargos aparecem no seu perfil e destacam suas preferências dentro do servidor.\n"
+    "Cada botão **adiciona** ou **remove** o cargo referente à tecnologia escolhida.\nOs cargos aparecem no seu perfil e destacam suas preferências.\n"
   );
 
-  const section = new SectionBuilder()
-    .addTextDisplayComponents(text1, text2, text3)
-    .setThumbnailAccessory(thumbnail);
-
-  container.addSectionComponents(section);
+  container.addMediaGalleryComponents(media);
+  container.addTextDisplayComponents(text1, text2, text3);
 
   for (let i = 0; i < TECHS.length; i += 5) {
     const techGroup = TECHS.slice(i, i + 5);

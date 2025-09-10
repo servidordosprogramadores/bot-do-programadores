@@ -4,9 +4,8 @@ const {
   ContainerBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
-  ThumbnailBuilder,
+  MediaGalleryBuilder,
   ActionRowBuilder,
-  SectionBuilder,
 } = require("discord.js");
 const { setRole } = require("../techs/setRole");
 const { removeRole } = require("../techs/removeRole");
@@ -15,9 +14,9 @@ require("dotenv").config();
 const PREMIUM_PERMISSION_ROLE_IDS = [
   process.env.BOOSTER_ROLE_ID,
   process.env.APOIADOR_ROLE_ID,
+  process.env.EMBAIXADOR_ROLE_ID,
   process.env.ATIVO_ROLE_ID,
   process.env.VIRAL_ROLE_ID,
-  process.env.FAMOSO_ID,
   process.env.CRIADOR_ROLE_ID,
   process.env.AMIGO_ROLE_ID,
 ].filter(Boolean);
@@ -172,32 +171,38 @@ function createColorSelectMenuV2() {
 }
 
 function createColorsContainerV2() {
-  const container = new ContainerBuilder().setAccentColor(16717077);
+  const container = new ContainerBuilder().setAccentColor(1379773);
 
-  const thumbnail = new ThumbnailBuilder({
-    media: {
-      url: "https://cdn3.emoji.gg/temp/68b63438404043.06536795_fpohmkjgielqn.png",
+  const media = new MediaGalleryBuilder().addItems([
+    {
+      media: {
+        url: "https://i.postimg.cc/hvg8Zpn8/PROGRAMADORES4.png",
+      },
     },
-  });
+  ]);
 
-  const text1 = new TextDisplayBuilder().setContent("# Paleta de Cores");
+  const text1 = new TextDisplayBuilder().setContent("# Painel de Cores");
   const text2 = new TextDisplayBuilder().setContent(
     "-# Selecione abaixo a sua cor preferida."
   );
   const text3 = new TextDisplayBuilder().setContent(
-    "Use o menu de seleção para **adicionar** ou **remover** uma cor. A cor aparece no seu perfil e destaca seu nome no servidor."
+    "Use o menu de seleção para **adicionar** ou **remover** uma cor. A cor aparece no seu\nperfil e destaca seu nome no servidor."
   );
 
-  const section = new SectionBuilder()
-    .addTextDisplayComponents(text1, text2, text3)
-    .setThumbnailAccessory(thumbnail);
+  const text4 = new TextDisplayBuilder().setContent(
+    `## Cores _padrões_:\n- <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>,\n- <@&1381471579287847002>, <@&1381471716462694502>.`
+  );
 
-  container.addSectionComponents(section);
+  const text5 = new TextDisplayBuilder().setContent(
+    `## Cores _especiais_:\n- <@&1381442335468032050>, <@&1381442379994763285>, <@&1381442246922211338>, <@&1381442273237008495>.`
+  );
 
-  const text4 = new TextDisplayBuilder()
-    .setContent(`**Cores padrões**: <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>, <@&1381471579287847002>, <@&1381471716462694502>.\n\n**Cores especiais**: <@&1381442335468032050>, <@&1381442379994763285>, <@&1381442246922211338>, <@&1381442273237008495>.\n\n**Cores premium**: <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>, <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`);
+  const text6 = new TextDisplayBuilder().setContent(
+    `## Cores _premium_:\n- <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>,\n- <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`
+  );
 
-  container.addTextDisplayComponents(text4);
+  container.addMediaGalleryComponents(media);
+  container.addTextDisplayComponents(text1, text2, text3, text4, text5, text6);
 
   const selectMenuRow = createColorSelectMenuV2();
   container.addActionRowComponents(selectMenuRow);
