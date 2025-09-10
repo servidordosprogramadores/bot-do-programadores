@@ -26,14 +26,14 @@ async function sendThankYou(amountCents, username, memberId = null, text = "") {
 
   let finalContent = `**Valor**: R$ ${amountBRL}\n-# Obrigado pelo seu apoio!`;
   if (amountCents >= SUPPORTER_THRESHOLD_CENTS) {
-    finalContent += `\n-# Caso não tenha recebido o cargo, chame um <@&1382436765410791565>.`;
+    finalContent += `\n-# Caso não tenha recebido o cargo, chame um <@&1363951824356249720>.`;
   }
 
   const payload = {
     components: [
       {
         type: 17,
-        accent_color: 8132862,
+        accent_color: 1379773,
         spoiler: false,
         components: [
           {

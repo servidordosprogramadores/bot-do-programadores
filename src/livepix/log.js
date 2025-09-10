@@ -14,7 +14,7 @@ async function sendDonationLog({ username, memberId, amountCents, text }) {
 
   const userDisplay = memberId ? `<@${memberId}>` : username || "Desconhecido";
   const amountBRL = ((amountCents || 0) / 100).toFixed(2).replace(".", ",");
-  const userMessage = (text || "—").replace(/(everyone|here)/gi, (match) =>
+  const userMessage = (text || "-").replace(/(everyone|here)/gi, (match) =>
     match.toLowerCase() === "everyone" ? "********" : "****"
   );
 
@@ -22,7 +22,7 @@ async function sendDonationLog({ username, memberId, amountCents, text }) {
     components: [
       {
         type: 17,
-        accent_color: 8132862,
+        accent_color: 1379773,
         spoiler: false,
         components: [
           {
@@ -43,6 +43,10 @@ async function sendDonationLog({ username, memberId, amountCents, text }) {
               {
                 type: 10,
                 content: `**Usuário**: ${userDisplay}\n**Mensagem**: ${userMessage}\n**Valor**: R$ ${amountBRL}\n`,
+              },
+              {
+                type: 10,
+                content: `-# <@&1225200441890181333>, <@&1363951824356249720>, <@&1364069154113454140>`,
               },
             ],
           },

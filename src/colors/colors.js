@@ -12,12 +12,13 @@ const { removeRole } = require("../techs/removeRole");
 require("dotenv").config();
 
 const PREMIUM_PERMISSION_ROLE_IDS = [
-  process.env.BOOSTER_ROLE_ID,
-  process.env.APOIADOR_ROLE_ID,
-  process.env.EMBAIXADOR_ROLE_ID,
-  process.env.ATIVO_ROLE_ID,
-  process.env.VIRAL_ROLE_ID,
   process.env.CRIADOR_ROLE_ID,
+  process.env.PARCEIRO_ROLE_ID,
+  process.env.APOIADOR_ROLE_ID,
+  process.env.BOOSTER_ROLE_ID,
+  process.env.VIRAL_ROLE_ID,
+  process.env.ATIVO_ROLE_ID,
+  process.env.EMBAIXADOR_ROLE_ID,
   process.env.AMIGO_ROLE_ID,
 ].filter(Boolean);
 
@@ -190,7 +191,7 @@ function createColorsContainerV2() {
   );
 
   const text4 = new TextDisplayBuilder().setContent(
-    `## Cores _padrões_:\n- <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>,\n- <@&1381471579287847002>, <@&1381471716462694502>.`
+    `## Cores _padrões_:\n- <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>,\n<@&1381471579287847002>, <@&1381471716462694502>.`
   );
 
   const text5 = new TextDisplayBuilder().setContent(
@@ -198,7 +199,7 @@ function createColorsContainerV2() {
   );
 
   const text6 = new TextDisplayBuilder().setContent(
-    `## Cores _premium_:\n- <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>,\n- <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`
+    `## Cores _premium_:\n- <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>,\n<@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`
   );
 
   container.addMediaGalleryComponents(media);
@@ -220,16 +221,13 @@ async function handleColorSelectClick(interaction) {
   const selectedValue = interaction.values[0];
   const member = interaction.member;
 
-  if (interaction.replied || interaction.deferred) {
-    console.log("Interação já foi respondida ou está diferida");
-    return;
-  }
-
-  try {
-    await interaction.deferReply({ ephemeral: true });
-  } catch (error) {
-    console.error("Erro ao deferir a interação:", error);
-    return;
+  if (!interaction.deferred && !interaction.replied) {
+    try {
+      await interaction.deferReply({ ephemeral: true });
+    } catch (error) {
+      console.error("Erro ao deferir a interação:", error);
+      return;
+    }
   }
 
   try {
