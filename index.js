@@ -52,7 +52,8 @@ client
   .login(process.env.BOT_TOKEN)
   .then(() => console.log("Logando..."))
   .catch((error) => {
-    console.error("Erro ao fazer login:", error);
+    console.error("Erro ao fazer login:", error); 
+    
   });
 
 const app = express();
