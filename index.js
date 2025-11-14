@@ -10,7 +10,6 @@ const {
 } = require("./src/colors/colors");
 const express = require("express");
 const bodyParser = require("body-parser");
-const { handleLivepixWebhook } = require("./src/livepix/messages");
 
 const client = new Client({
   intents: [
@@ -62,15 +61,6 @@ app.use(bodyParser.json());
 app.get("/", (req, res) =>
   res.status(200).send("OK - Servidor dos Programadores")
 );
-
-app.post("/livepix-webhook", async (req, res) => {
-  try {
-    await handleLivepixWebhook(req.body, res, client);
-  } catch (err) {
-    console.error("Erro no endpoint /livepix-webhook:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 const PORT = parseInt(process.env.PORT, 10) || 80;
 app.listen(PORT, () => {
