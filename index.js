@@ -37,7 +37,7 @@ client.once(Events.ClientReady, async (readyClient) => {
     }
 
     await sendTechLayoutMessage(readyClient);
-    // await sendColorEmbed(readyClient);
+    await sendColorEmbed(readyClient);
     await sendSupportEmbed(readyClient);
     await startRandomMessages(readyClient);
   } catch (error) {
