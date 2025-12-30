@@ -5,6 +5,7 @@ const {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
   MediaGalleryBuilder,
+  SeparatorBuilder,
   ActionRowBuilder,
 } = require("discord.js");
 const { setRole } = require("../techs/setRole");
