@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, Events } = require("discord.js");
+const { Client, GatewayIntentBits, Events, ActivityType } = require("discord.js");
 const {
   handleTechButtonClick,
   sendTechLayoutMessage,
@@ -27,7 +27,10 @@ const client = new Client({
 
 client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Bot conectado como ${readyClient.user.tag}`);
-  readyClient.user.setActivity("Membros 💙", { type: 3 });
+  readyClient.user.setActivity("🧑‍💻 Codando...", {
+    type: ActivityType.Streaming,
+    url: "https://www.twitch.tv/programadores",
+  });
 
   try {
     const guild = readyClient.guilds.cache.first();
