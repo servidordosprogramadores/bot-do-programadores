@@ -1,0 +1,103 @@
+const {
+  TextDisplayBuilder,
+  MessageFlags,
+  ContainerBuilder,
+  MediaGalleryBuilder,
+  MediaGalleryItemBuilder,
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
+  SeparatorBuilder,
+  SeparatorSpacingSize,
+} = require("discord.js");
+
+const SUPPORT_CHANNEL_ID = process.env.SUPPORT_CHANNEL_ID;
+
+async function sendSupportEmbed(client) {
+  try {
+    const channel = await client.channels.fetch(SUPPORT_CHANNEL_ID);
+    if (!channel) {
+      console.error("Canal de suporte não encontrado.");
+      return;
+    }
+
+    const messages = await channel.messages.fetch({ limit: 10 });
+    if (messages.size > 0) {
+      await channel.bulkDelete(messages);
+    }
+
+    const components = [
+      new ContainerBuilder()
+        .setAccentColor(parseInt(process.env.MAIN_COLOR))
+        .addMediaGalleryComponents(
+          new MediaGalleryBuilder().addItems(
+            new MediaGalleryItemBuilder().setURL(
+              "https://i.postimg.cc/5NzmVwR9/habilidades-profissional-de-atendimento-ao-cliente-interno-milldesk-scaled-Photoroom.png"
+            )
+          )
+        )
+        .addTextDisplayComponents(
+          new TextDisplayBuilder().setContent("# Suporte")
+        )
+        .addTextDisplayComponents(
+          new TextDisplayBuilder().setContent(
+            "Se você precisa de ajuda, suporte ou tem alguma dúvida, estamos aqui para te ajudar. Selecione uma opção no menu abaixo, e abra um ticket."
+          )
+        )
+        .addTextDisplayComponents(
+          new TextDisplayBuilder().setContent(
+            "-# Membros que abrirem tickets sem motivo serão penalizados."
+          )
+        ),
+      new SeparatorBuilder()
+        .setSpacing(SeparatorSpacingSize.Small)
+        .setDivider(true),
+      new ActionRowBuilder().addComponents(
+        new StringSelectMenuBuilder()
+          .setCustomId("support_ticket_select")
+          .setPlaceholder("Escolha uma opção")
+          .addOptions(
+            new StringSelectMenuOptionBuilder()
+              .setLabel("Problema Técnico")
+              .setValue("ticket_tech_issue")
+              .setDescription(
+                "Algo não está funcionando (bot, cargos, canais, permissões)."
+              )
+              .setEmoji("1455329097788952812"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("Denúncia")
+              .setValue("ticket_report")
+              .setDescription(
+                "Denúncias de comportamento suspeito, golpes ou usuários mal-intencionados."
+              )
+              .setEmoji("1455329165539541209"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("Vagas & Oportunidades")
+              .setValue("ticket_jobs")
+              .setDescription(
+                "Dúvidas sobre vagas postadas no servidor ou processos seletivos."
+              )
+              .setEmoji("1455329237144834221"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("Parcerias / Contato")
+              .setValue("ticket_partnership")
+              .setDescription(
+                "Bate-papo sobre parcerias, divulgação ou assuntos externos."
+              )
+              .setEmoji("1455329059268722719")
+          )
+      ),
+    ];
+
+    await channel.send({
+      flags: MessageFlags.IsComponentsV2,
+      components: components,
+    });
+
+    console.log("Embed de suporte enviada com sucesso!");
+  } catch (error) {
+    console.error("Erro ao enviar embed de suporte:", error);
+  }
+}
+
+module.exports = { sendSupportEmbed };

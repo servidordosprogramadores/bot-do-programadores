@@ -5,6 +5,8 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
+  SeparatorSpacingSize,
+  SeparatorBuilder,
   MediaGalleryBuilder,
 } = require("discord.js");
 const { setRole } = require("./setRole");
@@ -105,7 +107,8 @@ const TECHS = [
 ];
 
 function createTechsLayoutV2() {
-  const container = new ContainerBuilder().setAccentColor(1379773);
+  const components = [];
+  const container = new ContainerBuilder().setAccentColor(parseInt(process.env.MAIN_COLOR));
 
   const media = new MediaGalleryBuilder().addItems([
     {
@@ -117,7 +120,7 @@ function createTechsLayoutV2() {
 
   const text1 = new TextDisplayBuilder().setContent("# Painel de Tecnologias");
   const text2 = new TextDisplayBuilder().setContent(
-    "-# Selecione abaixo as tecnologias com as quais você se identifica."
+    "### Selecione abaixo as tecnologias com as quais você se identifica."
   );
   const text3 = new TextDisplayBuilder().setContent(
     "Cada botão **adiciona** ou **remove** o cargo referente à tecnologia escolhida.\nOs cargos aparecem no seu perfil e destacam suas preferências.\n"
@@ -125,6 +128,12 @@ function createTechsLayoutV2() {
 
   container.addMediaGalleryComponents(media);
   container.addTextDisplayComponents(text1, text2, text3);
+  components.push(container);
+
+  const separator = new SeparatorBuilder()
+    .setSpacing(SeparatorSpacingSize.Small)
+    .setDivider(true);
+  components.push(separator);
 
   for (let i = 0; i < TECHS.length; i += 5) {
     const techGroup = TECHS.slice(i, i + 5);
@@ -140,10 +149,10 @@ function createTechsLayoutV2() {
       row.addComponents(button);
     });
 
-    container.addActionRowComponents(row);
+    components.push(row);
   }
 
-  return container;
+  return components;
 }
 
 async function handleTechButtonClick(interaction) {
@@ -155,7 +164,6 @@ async function handleTechButtonClick(interaction) {
   if (!tech) return;
 
   try {
-    await interaction.deferReply({ ephemeral: true });
     const member = interaction.member;
     const hasRole = member.roles.cache.has(tech.roleId);
     const role = interaction.guild.roles.cache.get(tech.roleId);
@@ -163,13 +171,15 @@ async function handleTechButtonClick(interaction) {
     if (hasRole) {
       await removeRole(member, tech.roleId);
 
-      const container = new ContainerBuilder();
+      const container = new ContainerBuilder().setAccentColor(
+        parseInt(process.env.MAIN_COLOR)
+      );
       const text = new TextDisplayBuilder().setContent(
         `Cargo ${role} removido do seu perfil.`
       );
       container.addTextDisplayComponents(text);
 
-      await interaction.editReply({
+      await interaction.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [container],
         ephemeral: true,
@@ -177,13 +187,15 @@ async function handleTechButtonClick(interaction) {
     } else {
       await setRole(member, tech.roleId);
 
-      const container = new ContainerBuilder();
+      const container = new ContainerBuilder().setAccentColor(
+        parseInt(process.env.MAIN_COLOR)
+      );
       const text = new TextDisplayBuilder().setContent(
         `Cargo ${role} adicionado ao seu perfil.`
       );
       container.addTextDisplayComponents(text);
 
-      await interaction.editReply({
+      await interaction.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [container],
         ephemeral: true,
@@ -192,17 +204,21 @@ async function handleTechButtonClick(interaction) {
   } catch (error) {
     console.error(`Erro ao lidar com ${tech.name}:`, error);
 
-    const container = new ContainerBuilder();
+    const container = new ContainerBuilder().setAccentColor(
+      parseInt(process.env.MAIN_COLOR)
+    );
     const text = new TextDisplayBuilder().setContent(
       `Ocorreu um erro ao processar sua ação.`
     );
     container.addTextDisplayComponents(text);
 
-    await interaction.editReply({
-      flags: MessageFlags.IsComponentsV2,
-      components: [container],
-      ephemeral: true,
-    });
+    if (!interaction.replied) {
+      await interaction.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
+        ephemeral: true,
+      });
+    }
   }
 }
 
@@ -217,10 +233,10 @@ async function sendTechLayoutMessage(client) {
       await techsChannel.bulkDelete(messages);
     }
 
-    const container = createTechsLayoutV2();
+    const components = createTechsLayoutV2();
     await techsChannel.send({
       flags: MessageFlags.IsComponentsV2,
-      components: [container],
+      components: components,
     });
 
     console.log("Painel de tecnologias enviado com sucesso!");

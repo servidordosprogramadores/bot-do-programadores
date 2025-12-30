@@ -171,7 +171,8 @@ function createColorSelectMenuV2() {
 }
 
 function createColorsContainerV2() {
-  const container = new ContainerBuilder().setAccentColor(1379773);
+  const components = [];
+  const container = new ContainerBuilder().setAccentColor(parseInt(process.env.MAIN_COLOR));
 
   const media = new MediaGalleryBuilder().addItems([
     {
@@ -183,31 +184,37 @@ function createColorsContainerV2() {
 
   const text1 = new TextDisplayBuilder().setContent("# Painel de Cores");
   const text2 = new TextDisplayBuilder().setContent(
-    "-# Selecione abaixo a sua cor preferida."
+    "### Selecione abaixo a sua cor preferida."
   );
   const text3 = new TextDisplayBuilder().setContent(
     "Use o menu de seleção para **adicionar** ou **remover** uma cor. A cor aparece no seu perfil e destaca seu nome no servidor."
   );
 
   const text4 = new TextDisplayBuilder().setContent(
-    `## Cores _padrões_:\n- <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>, <@&1381471579287847002>, <@&1381471716462694502>.`
+    `### Cores padrões:\n- <@&1381471316934266932>, <@&1381471416280682517>, <@&1381471984428253255>, <@&1381471512401547345>, <@&1381471925187907644>, <@&1381471816660422666>, <@&1381471983799111791>, <@&1381471579287847002>, <@&1381471716462694502>.`
   );
 
   const text5 = new TextDisplayBuilder().setContent(
-    `## Cores _especiais_:\n- <@&1381442335468032050>, <@&1381442379994763285>, <@&1381442246922211338>, <@&1381442273237008495>.`
+    `### Cores especiais:\n- <@&1381442335468032050>, <@&1381442379994763285>, <@&1381442246922211338>, <@&1381442273237008495>.`
   );
 
   const text6 = new TextDisplayBuilder().setContent(
-    `## Cores _premium_:\n- <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>, <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`
+    `### Cores premium:\n- <@&1381754982876971008>, <@&1381755628883677184>, <@&1381755715584004227>, <@&1381755759187988591>, <@&1381755389485383770>, <@&1381755107753988146>, <@&1381755913987162163>.`
   );
 
   container.addMediaGalleryComponents(media);
   container.addTextDisplayComponents(text1, text2, text3, text4, text5, text6);
+  components.push(container);
+
+  const separator = new SeparatorBuilder()
+    .setSpacing(SeparatorSpacingSize.Small)
+    .setDivider(true);
+  components.push(separator);
 
   const selectMenuRow = createColorSelectMenuV2();
-  container.addActionRowComponents(selectMenuRow);
+  components.push(selectMenuRow);
 
-  return container;
+  return components;
 }
 
 async function handleColorSelectClick(interaction) {
@@ -220,15 +227,6 @@ async function handleColorSelectClick(interaction) {
   const selectedValue = interaction.values[0];
   const member = interaction.member;
 
-  if (!interaction.deferred && !interaction.replied) {
-    try {
-      await interaction.deferReply({ ephemeral: true });
-    } catch (error) {
-      console.error("Erro ao deferir a interação:", error);
-      return;
-    }
-  }
-
   try {
     if (selectedValue === "remove_color_option") {
       let removedCount = 0;
@@ -239,7 +237,9 @@ async function handleColorSelectClick(interaction) {
         }
       }
 
-      const container = new ContainerBuilder();
+      const container = new ContainerBuilder().setAccentColor(
+        parseInt(process.env.MAIN_COLOR)
+      );
       let msg =
         removedCount > 0
           ? "Sua cor foi removida."
@@ -248,7 +248,7 @@ async function handleColorSelectClick(interaction) {
         new TextDisplayBuilder().setContent(msg)
       );
 
-      await interaction.editReply({
+      await interaction.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [container],
         ephemeral: true,
@@ -260,13 +260,15 @@ async function handleColorSelectClick(interaction) {
       );
 
       if (!selectedColor) {
-        const container = new ContainerBuilder();
+        const container = new ContainerBuilder().setAccentColor(
+          parseInt(process.env.MAIN_COLOR)
+        );
         container.addTextDisplayComponents(
           new TextDisplayBuilder().setContent(
             "Cor inválida selecionada ou não encontrada."
           )
         );
-        await interaction.editReply({
+        await interaction.reply({
           flags: MessageFlags.IsComponentsV2,
           components: [container],
           ephemeral: true,
@@ -294,13 +296,15 @@ async function handleColorSelectClick(interaction) {
             }
           }
 
-          const container = new ContainerBuilder();
+          const container = new ContainerBuilder().setAccentColor(
+            parseInt(process.env.MAIN_COLOR)
+          );
           container.addTextDisplayComponents(
             new TextDisplayBuilder().setContent(
               `Para selecionar uma **cor premium**, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.`
             )
           );
-          await interaction.editReply({
+          await interaction.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [container],
             ephemeral: true,
@@ -324,13 +328,15 @@ async function handleColorSelectClick(interaction) {
       }
 
       const role = interaction.guild.roles.cache.get(selectedColor.roleId);
-      const container = new ContainerBuilder();
+      const container = new ContainerBuilder().setAccentColor(
+        parseInt(process.env.MAIN_COLOR)
+      );
       container.addTextDisplayComponents(
         new TextDisplayBuilder().setContent(
           `Cargo ${role} adicionado ao seu perfil.`
         )
       );
-      await interaction.editReply({
+      await interaction.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [container],
         ephemeral: true,
@@ -338,18 +344,22 @@ async function handleColorSelectClick(interaction) {
     }
   } catch (error) {
     console.error(`Erro ao gerenciar cor:`, error);
-    const container = new ContainerBuilder();
+    const container = new ContainerBuilder().setAccentColor(
+      parseInt(process.env.MAIN_COLOR)
+    );
     container.addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
         `Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
       )
     );
     try {
-      await interaction.editReply({
-        flags: MessageFlags.IsComponentsV2,
-        components: [container],
-        ephemeral: true,
-      });
+      if (!interaction.replied) {
+        await interaction.reply({
+          flags: MessageFlags.IsComponentsV2,
+          components: [container],
+          ephemeral: true,
+        });
+      }
     } catch (replyError) {
       console.error("Erro ao responder com erro para o usuário:", replyError);
     }
@@ -367,11 +377,11 @@ async function sendColorEmbed(client) {
       await colorsChannel.bulkDelete(messages);
     }
 
-    const container = createColorsContainerV2();
+    const components = createColorsContainerV2();
 
     await colorsChannel.send({
       flags: MessageFlags.IsComponentsV2,
-      components: [container],
+      components: components,
     });
 
     console.log("Painel de cores enviado com sucesso!");

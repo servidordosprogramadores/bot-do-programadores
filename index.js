@@ -8,6 +8,9 @@ const {
   handleColorSelectClick,
   sendColorEmbed,
 } = require("./src/colors/colors");
+const { sendSupportEmbed } = require("./src/support/support");
+const { handleSupportInteraction } = require("./src/support/resolve");
+const { startRandomMessages } = require("./src/extras/sendRandomMessage");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -34,7 +37,9 @@ client.once(Events.ClientReady, async (readyClient) => {
     }
 
     await sendTechLayoutMessage(readyClient);
-    await sendColorEmbed(readyClient);
+    // await sendColorEmbed(readyClient);
+    await sendSupportEmbed(readyClient);
+    await startRandomMessages(readyClient);
   } catch (error) {
     console.error("Erro ao processar informações do servidor:", error);
   }
@@ -43,8 +48,10 @@ client.once(Events.ClientReady, async (readyClient) => {
 client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isButton()) {
     await handleTechButtonClick(interaction);
+    await handleSupportInteraction(interaction);
   } else if (interaction.isStringSelectMenu()) {
     await handleColorSelectClick(interaction);
+    await handleSupportInteraction(interaction);
   }
 });
 
@@ -52,8 +59,8 @@ client
   .login(process.env.BOT_TOKEN)
   .then(() => console.log("Logando..."))
   .catch((error) => {
-    console.error("Erro ao fazer login:", error); 
-    
+    console.error("Erro ao fazer login:", error);
+
   });
 
 const app = express();
