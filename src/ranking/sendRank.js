@@ -59,8 +59,8 @@ async function sendRankMessage(client, textRank, voiceRank) {
       .addComponents(
         new ButtonBuilder()
           .setStyle(ButtonStyle.Link)
-          .setLabel("Como subir de nível?")
-          .setURL("https://google.com"),
+          .setLabel("Como subir de nível e para que servem?")
+          .setURL("https://discord.com/channels/1112920281367973900/1455800215083683881"),
       ),
   ];
 
