@@ -239,9 +239,9 @@ async function sendTechLayoutMessage(client) {
       components: components,
     });
 
-    console.log("Painel de tecnologias enviado com sucesso!");
+    console.log("[Techs] Painel enviado com sucesso!");
   } catch (error) {
-    console.error("Erro ao enviar painel de tecnologias:", error);
+    console.error("[Techs] Erro ao enviar painel:", error);
   }
 }
 

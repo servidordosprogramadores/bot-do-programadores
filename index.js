@@ -11,6 +11,7 @@ const {
 const { sendSupportEmbed } = require("./src/support/support");
 const { handleSupportInteraction } = require("./src/support/resolve");
 const { startRandomMessages } = require("./src/extras/sendRandomMessage");
+const ranking = require("./src/ranking/ranking");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -43,6 +44,7 @@ client.once(Events.ClientReady, async (readyClient) => {
     await sendColorEmbed(readyClient);
     await sendSupportEmbed(readyClient);
     await startRandomMessages(readyClient);
+    ranking(readyClient);
   } catch (error) {
     console.error("Erro ao processar informações do servidor:", error);
   }

@@ -30,7 +30,7 @@ async function handleSupportInteraction(interaction) {
       await closeTicket(interaction);
     }
   } catch (error) {
-    console.error("Erro ao processar interação de suporte:", error);
+    console.error("[Support] Erro ao processar interação de suporte:", error);
     try {
       const container = new ContainerBuilder()
         .setAccentColor(parseInt(process.env.MAIN_COLOR))

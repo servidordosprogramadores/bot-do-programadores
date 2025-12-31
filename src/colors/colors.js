@@ -351,7 +351,7 @@ async function handleColorSelectClick(interaction) {
     );
     container.addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
-        `Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
+        `[Colors] Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
       )
     );
     try {
@@ -363,7 +363,7 @@ async function handleColorSelectClick(interaction) {
         });
       }
     } catch (replyError) {
-      console.error("Erro ao responder com erro para o usuário:", replyError);
+      console.error("[Colors] Erro ao responder com erro para o usuário:", replyError);
     }
   }
 }
@@ -383,12 +383,13 @@ async function sendColorEmbed(client) {
 
     await colorsChannel.send({
       flags: MessageFlags.IsComponentsV2,
-      components: components,
+      components,
+      allowedMentions: { parse: [] },
     });
 
-    console.log("Painel de cores enviado com sucesso!");
+    console.log("[Colors] Painel enviado com sucesso!");
   } catch (error) {
-    console.error("Erro ao enviar painel de cores:", error);
+    console.error("[Colors] Erro ao enviar painel:", error);
   }
 }
 

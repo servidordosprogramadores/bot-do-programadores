@@ -17,7 +17,7 @@ async function sendSupportEmbed(client) {
   try {
     const channel = await client.channels.fetch(SUPPORT_CHANNEL_ID);
     if (!channel) {
-      console.error("Canal de suporte não encontrado.");
+      console.error("[Support] Canal de suporte não encontrado.");
       return;
     }
 
@@ -32,7 +32,7 @@ async function sendSupportEmbed(client) {
         .addMediaGalleryComponents(
           new MediaGalleryBuilder().addItems(
             new MediaGalleryItemBuilder().setURL(
-              "https://i.postimg.cc/5NzmVwR9/habilidades-profissional-de-atendimento-ao-cliente-interno-milldesk-scaled-Photoroom.png"
+              "https://i.postimg.cc/Hn83pnt4/suporte.png"
             )
           )
         )
@@ -94,9 +94,9 @@ async function sendSupportEmbed(client) {
       components: components,
     });
 
-    console.log("Embed de suporte enviada com sucesso!");
+    console.log("[Support] Painel enviado com sucesso!");
   } catch (error) {
-    console.error("Erro ao enviar embed de suporte:", error);
+    console.error("[Support] Erro ao enviar painel:", error);
   }
 }
 

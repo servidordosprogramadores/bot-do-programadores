@@ -44,12 +44,12 @@ async function sendWebhook(content) {
     });
 
     if (res.ok) {
-      console.log("Mensagem enviada com sucesso.");
+      console.log("[Random] Mensagem enviada com sucesso.");
     } else {
-      console.error("Falha ao enviar mensagem:", res.status, await res.text());
+      console.error("[Random] Falha ao enviar mensagem:", res.status, await res.text());
     }
   } catch (err) {
-    console.error("Erro ao enviar webhook:", err);
+    console.error("[Random] Erro ao enviar webhook:", err);
   }
 }
 
@@ -65,9 +65,8 @@ async function startRandomMessages(client) {
   try {
     const webhook = await client.fetchWebhook(webhookId, webhookToken);
     channelId = webhook.channelId;
-    console.log(`Webhook encontrado. Canal ID: ${channelId}`);
   } catch (error) {
-    console.error("Erro ao buscar webhook:", error);
+    console.error("[Random] Erro ao buscar webhook:", error);
     return;
   }
 
@@ -75,7 +74,7 @@ async function startRandomMessages(client) {
     try {
       const channel = await client.channels.fetch(channelId);
       if (!channel) {
-        console.error("Canal não encontrado.");
+        console.error("[Random] Canal não encontrado.");
         return;
       }
 
@@ -83,9 +82,6 @@ async function startRandomMessages(client) {
       const hasWebhook = messagesHistory.some((msg) => msg.webhookId);
 
       if (hasWebhook) {
-        console.log(
-          "Já existe uma mensagem de webhook nas últimas 100 mensagens. Pulando envio."
-        );
         return;
       }
 
@@ -99,12 +95,12 @@ async function startRandomMessages(client) {
 
       await sendWebhook(messageToSend);
     } catch (error) {
-      console.error("Erro na tarefa de mensagens aleatórias:", error);
+      console.error("[Random] Erro na tarefa de mensagens aleatórias:", error);
     }
   };
 
-  // Executar a cada 6 horas
-  setInterval(runTask, 6 * 60 * 60 * 1000);
+  // Executar a cada 4 horas
+  setInterval(runTask, 4 * 60 * 60 * 1000);
 
   // Executar imediatamente ao iniciar
   runTask();
