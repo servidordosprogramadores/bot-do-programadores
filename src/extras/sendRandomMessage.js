@@ -5,7 +5,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const WEBHOOK_URL = process.env.WEBHOOK_CHAT + "?with_components=true";
 
 const messages = [
-  "<:curriculo:1455329237144834221> Sempre desconfie de vagas que te mandam no privado. Nossos canais de vagas oficiais são os <#1381769079710285855> e <#1455014681881350216>.",
+  "<:curriculo:1455329237144834221> Sempre desconfie de vagas que te mandam no privado. Nossos canais de vagas oficiais são <#1381769079710285855> e <#1455014681881350216>.",
   "<:paleta:1455353253725339871> Escolha sua cor no chat <#1381473062108790814>.",
   "<:stack:1455353284335374521> Escolha suas tecnologias no canal <#1363980601115410462>.",
   "<:globo:1455353335602352259> Torne-se um embaixador do servidor! Confira o chat <#1410072306021302344>.",

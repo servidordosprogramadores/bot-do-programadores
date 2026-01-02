@@ -19,7 +19,6 @@ const PREMIUM_PERMISSION_ROLE_IDS = [
   process.env.BOOSTER_ROLE_ID,
   process.env.VIRAL_ROLE_ID,
   process.env.ATIVO_ROLE_ID,
-  process.env.EMBAIXADOR_ROLE_ID,
   process.env.AMIGO_ROLE_ID,
 ].filter(Boolean);
 
@@ -166,7 +165,7 @@ function createColorSelectMenuV2() {
 
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId("color_select")
-    .setPlaceholder("Escolha uma cor ou remova a atual...")
+    .setPlaceholder("Escolha uma cor ou remova a atual")
     .addOptions(options);
 
   return new ActionRowBuilder().addComponents(selectMenu);
