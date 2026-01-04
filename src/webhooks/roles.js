@@ -74,7 +74,7 @@ const payload = {
         },
         {
           "type": 10,
-          "content": "- <@&1224303972572074015> Cargo **padrão do servidor**, concedido automaticamente ao entrar.\n-# Obtido **automaticamente** ao entrar no servidor.\n- <@&1457476221247033466> Cargo de **tecnologias** para destacar sua stack.\n-# Obtido através do canal **<#1363980601115410462>**.\n- <@&1457475998043082985> Cargo de **cores** para customizar seu perfil.\n-# Obtido através do canal **<#1381473062108790814>**.\n- <@&1457478005864792184> Cargo de **senioridade**.\n-# Obtido automaticamente através do **onboarding** ao entrar no servidor.\n- <@&1457477233332715561> Cargo de **região**.\n-# Obtido automaticamente através do **onboarding** ao entrar no servidor.\n- <@&1457476043131588678> Cargo de **notificações**.\n-# Obtido automaticamente através do **onboarding** ao entrar no servidor."
+          "content": "- <@&1224303972572074015> Cargo **padrão do servidor**.\n-# Obtido **automaticamente** ao entrar no servidor.\n- <@&1457476221247033466> Cargo de **tecnologias** para destacar sua stack.\n-# Obtido através do canal **<#1363980601115410462>**.\n- <@&1457475998043082985> Cargo de **cores** para customizar seu perfil.\n-# Obtido através do canal **<#1381473062108790814>**.\n- <@&1457478005864792184> Cargo de **senioridade**.\n-# Obtido automaticamente através do **onboarding** ao entrar no servidor.\n- <@&1457477233332715561> Cargo de **região**.\n-# Obtido automaticamente através do **onboarding** ao entrar no servidor.\n- <@&1457476043131588678> Cargo de **notificações**.\n-# Obtido automaticamente através do **onboarding** ao entrar no servidor."
         }
       ]
     }
