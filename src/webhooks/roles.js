@@ -44,7 +44,7 @@ const payload = {
         },
         {
           "type": 10,
-          "content": "- <@&1225200441890181333> Cargo destinado aos **donos do servidor**.\n-# **Não é possível** obter esse cargo.\n- <@&1363951824356249720> Cargo para **staffs com permissões administrativas**, responsáveis por auxiliar o servidor em todos os aspectos.\n-# **Não é possível**obter esse cargo.\n- <@&1364069154113454140> Carog para **staffs com permissões menores**, focados em ajudar os membros e manter a organização do servidor.\n-# Obtido ao ser **ativo** na comunidade e **mostrar interesse** em participar da moderação."
+          "content": "- <@&1225200441890181333> Cargo destinado aos **donos do servidor**.\n-# **Não é possível** obter esse cargo.\n- <@&1363951824356249720> Cargo para **staffs com permissões administrativas**, responsáveis por auxiliar o servidor em todos os aspectos.\n-# **Não é possível**obter esse cargo.\n- <@&1364069154113454140> Cargo para **staffs com permissões menores**, focados em ajudar os membros e manter a organização do servidor.\n-# Obtido ao ser **ativo** na comunidade e **mostrar interesse** em participar da moderação."
         }
       ]
     },
