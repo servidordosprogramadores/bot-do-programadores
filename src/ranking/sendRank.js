@@ -27,7 +27,7 @@ async function sendRankMessage(client, textRank, voiceRank) {
         new MediaGalleryBuilder()
           .addItems(
             new MediaGalleryItemBuilder()
-              .setURL("https://i.postimg.cc/667N7hjm/ranking.png"),
+              .setURL("https://i.postimg.cc/hGWsSnVf/PRg2.png"),
           ),
       )
       .addTextDisplayComponents(
