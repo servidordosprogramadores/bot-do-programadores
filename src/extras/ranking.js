@@ -210,7 +210,7 @@ module.exports = (client) => {
             new MediaGalleryBuilder()
               .addItems(
                 new MediaGalleryItemBuilder()
-                  .setURL("https://i.postimg.cc/yNgTDDnR/PROGRAMADORES1.png"),
+                  .setURL("https://i.postimg.cc/hGWsSnVf/PRg2.png"),
               ),
           )
           .addTextDisplayComponents(

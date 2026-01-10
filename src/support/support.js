@@ -32,7 +32,7 @@ async function sendSupportEmbed(client) {
         .addMediaGalleryComponents(
           new MediaGalleryBuilder().addItems(
             new MediaGalleryItemBuilder().setURL(
-              "https://i.postimg.cc/Hn83pnt4/suporte.png"
+              "https://i.postimg.cc/TwSXwh0m/PRg1.png"
             )
           )
         )

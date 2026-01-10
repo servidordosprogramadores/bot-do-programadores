@@ -16,7 +16,7 @@ const payload = {
           "items": [
             {
               "media": {
-                "url": "https://i.postimg.cc/nhMfRtnk/banner-servidor-dos-programadores.png"
+                "url": "https://i.postimg.cc/9QtR7Hv9/PRg4.png"
               },
               "description": null,
               "spoiler": false
