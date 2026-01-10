@@ -240,7 +240,7 @@ module.exports = (client) => {
       ];
 
       // 5. Enviar/Editar via Bot Client no canal alvo
-      const messages = await targetChannel.messages.fetch({ limit: 50 });
+      const messages = await targetChannel.messages.fetch({ limit: 10 });
       const lastBotMsg = messages.find(m => m.author.id === client.user.id);
 
       if (lastBotMsg) {
