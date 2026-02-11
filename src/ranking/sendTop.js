@@ -16,7 +16,7 @@ async function sendTopCommand(client) {
     application_id: "1245727635536085032",
     guild_id: GUILD_ID,
     channel_id: TRIGGER_CHANNEL_ID,
-    session_id: "53316d7bd6191fd7963faf5ac3d65934",
+    session_id: "915fa8ed0c406758b8d06ec596a766ae",
     data: {
       version: "1431067718710464523",
       id: "1248343303901155359",
