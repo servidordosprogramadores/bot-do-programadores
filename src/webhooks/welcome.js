@@ -67,7 +67,7 @@ const payload = {
           "label": "Ache uma vaga",
           "emoji": null,
           "disabled": false,
-          "url": "https://discord.com/channels/1112920281367973900/1381769079710285855"
+          "url": "https://discord.com/channels/1112920281367973900/1465190415614345329"
         },
         {
           "type": 2,

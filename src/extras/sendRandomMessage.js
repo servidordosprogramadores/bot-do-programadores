@@ -14,6 +14,7 @@ const messages = [
   "<:code:1455354846642438245> Precisa de ajuda com código ou programação? Mande uma mensagem no chat <#1382444218043338813>.",
   "<:id:1455353201216720906> Para verificar o seu rank utilize o comando `/id` no chat <#1224155518604542182>.",
   "<:foguete:1455353180979331172> Impulsione o servidor! Confira o chat <#1363964628639551498>.",
+  "<:navigationarrow:1465200982274216152> Conheça os cargos do servidor! Confira o chat <#1381473062108790814>.",
 ];
 
 let lastMessageIndex = -1;
