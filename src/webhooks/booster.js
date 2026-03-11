@@ -29,7 +29,7 @@ const payload = {
         },
         {
           "type": 10,
-          "content": "- Cargo exclusivo de <@&1115446339661221980>.\n- Acesso ao canal ⁠⁠<#1397046990986023034>, <#1454921408814776494> e <#1454921435360526368>.\n- Permissão de enviar imagens no <#1113274694443999282>.\n- Acesso a cores holográficas no canal <#1381473062108790814>.\n- Insígnia no seu perfil do Discord que evolui com o tempo <a:z_boostMudando_cdw:943323396316495902>.\n- Ícone de Booster ao lado do seu nome aqui no servidor."
+          "content": "- Cargo exclusivo de <@&1115446339661221980>.\n- Acesso ao canal ⁠⁠<#1397046990986023034>;\n- Permissão de enviar imagens no <#1113274694443999282>;\n- Acesso a cores holográficas no canal <#1381473062108790814>;\n- Insígnia no seu perfil do Discord que evolui com o tempo <a:z_boostMudando_cdw:943323396316495902>;\n- Ícone de Booster ao lado do seu nome aqui no servidor."
         },
         {
           "type": 10,
