@@ -225,8 +225,11 @@ async function handleColorSelectClick(interaction) {
   )
     return;
 
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
   const selectedValue = interaction.values[0];
   const member = interaction.member;
+  console.log(`[Colors] ${member.user.tag} selecionou: "${selectedValue}"`);
 
   try {
     if (selectedValue === "remove_color_option") {
@@ -237,22 +240,20 @@ async function handleColorSelectClick(interaction) {
           removedCount++;
         }
       }
+      console.log(`[Colors] ${removedCount} cargo(s) de cor removido(s) de ${member.user.tag}.`);
 
-      const container = new ContainerBuilder().setAccentColor(
-        parseInt(process.env.MAIN_COLOR)
-      );
-      let msg =
+      const msg =
         removedCount > 0
           ? "Sua cor foi removida."
           : "Você não possui uma cor para remover.";
-      container.addTextDisplayComponents(
-        new TextDisplayBuilder().setContent(msg)
-      );
 
-      await interaction.reply({
+      const container = new ContainerBuilder()
+        .setAccentColor(parseInt(process.env.MAIN_COLOR))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(msg));
+
+      await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,
         components: [container],
-        ephemeral: true,
       });
     } else {
       const colorName = selectedValue.replace("color_", "");
@@ -261,18 +262,14 @@ async function handleColorSelectClick(interaction) {
       );
 
       if (!selectedColor) {
-        const container = new ContainerBuilder().setAccentColor(
-          parseInt(process.env.MAIN_COLOR)
-        );
-        container.addTextDisplayComponents(
-          new TextDisplayBuilder().setContent(
-            "Cor inválida selecionada ou não encontrada."
-          )
-        );
-        await interaction.reply({
+        const container = new ContainerBuilder()
+          .setAccentColor(parseInt(process.env.MAIN_COLOR))
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent("Cor inválida selecionada ou não encontrada.")
+          );
+        await interaction.editReply({
           flags: MessageFlags.IsComponentsV2,
           components: [container],
-          ephemeral: true,
         });
         return;
       }
@@ -297,18 +294,16 @@ async function handleColorSelectClick(interaction) {
             }
           }
 
-          const container = new ContainerBuilder().setAccentColor(
-            parseInt(process.env.MAIN_COLOR)
-          );
-          container.addTextDisplayComponents(
-            new TextDisplayBuilder().setContent(
-              `Para selecionar uma **cor premium**, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.`
-            )
-          );
-          await interaction.reply({
+          const container = new ContainerBuilder()
+            .setAccentColor(parseInt(process.env.MAIN_COLOR))
+            .addTextDisplayComponents(
+              new TextDisplayBuilder().setContent(
+                `Para selecionar uma **cor premium**, você precisa possuir um dos seguintes cargos: ${permissionRolesMentions}.`
+              )
+            );
+          await interaction.editReply({
             flags: MessageFlags.IsComponentsV2,
             components: [container],
-            ephemeral: true,
           });
           return;
         }
@@ -329,38 +324,31 @@ async function handleColorSelectClick(interaction) {
       }
 
       const role = interaction.guild.roles.cache.get(selectedColor.roleId);
-      const container = new ContainerBuilder().setAccentColor(
-        parseInt(process.env.MAIN_COLOR)
-      );
-      container.addTextDisplayComponents(
-        new TextDisplayBuilder().setContent(
-          `Cargo ${role} adicionado ao seu perfil.`
-        )
-      );
-      await interaction.reply({
+      console.log(`[Colors] ✓ Cor "${selectedColor.name}" aplicada para ${member.user.tag}.`);
+      const container = new ContainerBuilder()
+        .setAccentColor(parseInt(process.env.MAIN_COLOR))
+        .addTextDisplayComponents(
+          new TextDisplayBuilder().setContent(`Cargo ${role} adicionado ao seu perfil.`)
+        );
+      await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,
         components: [container],
-        ephemeral: true,
       });
     }
   } catch (error) {
-    console.error(`Erro ao gerenciar cor:`, error);
-    const container = new ContainerBuilder().setAccentColor(
-      parseInt(process.env.MAIN_COLOR)
-    );
-    container.addTextDisplayComponents(
-      new TextDisplayBuilder().setContent(
-        `[Colors] Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
-      )
-    );
+    console.error(`[Colors] ✗ Erro ao gerenciar cor para ${member.user.tag}:`, error);
+    const container = new ContainerBuilder()
+      .setAccentColor(parseInt(process.env.MAIN_COLOR))
+      .addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(
+          `Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.`
+        )
+      );
     try {
-      if (!interaction.replied) {
-        await interaction.reply({
-          flags: MessageFlags.IsComponentsV2,
-          components: [container],
-          ephemeral: true,
-        });
-      }
+      await interaction.editReply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [container],
+      });
     } catch (replyError) {
       console.error("[Colors] Erro ao responder com erro para o usuário:", replyError);
     }

@@ -15,15 +15,21 @@ const SUPPORT_CHANNEL_ID = process.env.SUPPORT_CHANNEL_ID;
 
 async function sendSupportEmbed(client) {
   try {
+    console.log(`[Support] Buscando canal ${SUPPORT_CHANNEL_ID}...`);
     const channel = await client.channels.fetch(SUPPORT_CHANNEL_ID);
     if (!channel) {
       console.error("[Support] Canal de suporte não encontrado.");
       return;
     }
+    console.log(`[Support] ✓ Canal encontrado: #${channel.name}`);
 
+    console.log("[Support] Limpando mensagens anteriores...");
     const messages = await channel.messages.fetch({ limit: 10 });
     if (messages.size > 0) {
       await channel.bulkDelete(messages);
+      console.log(`[Support] ✓ ${messages.size} mensagem(ns) deletada(s).`);
+    } else {
+      console.log("[Support] Nenhuma mensagem para limpar.");
     }
 
     const components = [

@@ -163,74 +163,64 @@ async function handleTechButtonClick(interaction) {
   const tech = TECHS.find((t) => t.id === techId);
   if (!tech) return;
 
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
   try {
     const member = interaction.member;
     const hasRole = member.roles.cache.has(tech.roleId);
     const role = interaction.guild.roles.cache.get(tech.roleId);
+    console.log(`[Techs] ${member.user.tag} clicou em "${tech.name}" — ${hasRole ? "removendo" : "adicionando"} cargo.`);
 
     if (hasRole) {
       await removeRole(member, tech.roleId);
-
-      const container = new ContainerBuilder().setAccentColor(
-        parseInt(process.env.MAIN_COLOR)
-      );
-      const text = new TextDisplayBuilder().setContent(
-        `Cargo ${role} removido do seu perfil.`
-      );
-      container.addTextDisplayComponents(text);
-
-      await interaction.reply({
-        flags: MessageFlags.IsComponentsV2,
-        components: [container],
-        ephemeral: true,
-      });
     } else {
       await setRole(member, tech.roleId);
-
-      const container = new ContainerBuilder().setAccentColor(
-        parseInt(process.env.MAIN_COLOR)
-      );
-      const text = new TextDisplayBuilder().setContent(
-        `Cargo ${role} adicionado ao seu perfil.`
-      );
-      container.addTextDisplayComponents(text);
-
-      await interaction.reply({
-        flags: MessageFlags.IsComponentsV2,
-        components: [container],
-        ephemeral: true,
-      });
     }
+
+    const message = hasRole
+      ? `Cargo ${role} removido do seu perfil.`
+      : `Cargo ${role} adicionado ao seu perfil.`;
+    console.log(`[Techs] ✓ "${tech.name}" ${hasRole ? "removido de" : "adicionado a"} ${member.user.tag}.`);
+
+    const container = new ContainerBuilder()
+      .setAccentColor(parseInt(process.env.MAIN_COLOR))
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent(message));
+
+    await interaction.editReply({
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
+    });
   } catch (error) {
-    console.error(`Erro ao lidar com ${tech.name}:`, error);
+    console.error(`[Techs] ✗ Erro ao lidar com "${tech.name}" para ${interaction.user.tag}:`, error);
 
-    const container = new ContainerBuilder().setAccentColor(
-      parseInt(process.env.MAIN_COLOR)
-    );
-    const text = new TextDisplayBuilder().setContent(
-      `Ocorreu um erro ao processar sua ação.`
-    );
-    container.addTextDisplayComponents(text);
+    const container = new ContainerBuilder()
+      .setAccentColor(parseInt(process.env.MAIN_COLOR))
+      .addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(`Ocorreu um erro ao processar sua ação.`)
+      );
 
-    if (!interaction.replied) {
-      await interaction.reply({
-        flags: MessageFlags.IsComponentsV2,
-        components: [container],
-        ephemeral: true,
-      });
-    }
+    await interaction.editReply({
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
+    });
   }
 }
 
 async function sendTechLayoutMessage(client) {
   try {
+    console.log(`[Techs] Buscando canal ${process.env.TECHS_CHANNEL_ID}...`);
     const techsChannel = await client.channels.fetch(
       process.env.TECHS_CHANNEL_ID
     );
+    console.log(`[Techs] ✓ Canal encontrado: #${techsChannel.name}`);
 
+    console.log("[Techs] Limpando mensagens anteriores...");
     const messages = await techsChannel.messages.fetch({ limit: 10 });
     if (messages.size > 0) {
       await techsChannel.bulkDelete(messages);
+      console.log(`[Techs] ✓ ${messages.size} mensagem(ns) deletada(s).`);
+    } else {
+      console.log("[Techs] Nenhuma mensagem para limpar.");
     }
 
     const components = createTechsLayoutV2();

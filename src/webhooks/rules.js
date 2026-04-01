@@ -58,6 +58,7 @@ const payload = {
 };
 
 async function sendWebhook() {
+  console.log("[Rules] Enviando painel de regras...");
   try {
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
@@ -66,12 +67,12 @@ async function sendWebhook() {
     });
 
     if (res.ok) {
-      console.log("Mensagem enviada com sucesso.");
+      console.log("[Rules] ✓ Mensagem enviada com sucesso.");
     } else {
-      console.error("Falha ao enviar mensagem:", res.status, await res.text());
+      console.error("[Rules] ✗ Falha ao enviar:", res.status, await res.text());
     }
   } catch (err) {
-    console.error("Erro ao enviar webhook:", err);
+    console.error("[Rules] ✗ Erro ao enviar webhook:", err);
   }
 }
 

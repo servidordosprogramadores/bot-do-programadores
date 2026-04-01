@@ -4,12 +4,13 @@ const N0VA_BOT_ID = process.env.N0VA_BOT_ID;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 
 async function sendTopCommand(client) {
-
+  console.log(`[Ranking] Buscando canal de trigger ${TRIGGER_CHANNEL_ID}...`);
   const triggerChannel = await client.channels.fetch(TRIGGER_CHANNEL_ID);
   if (!triggerChannel) {
     console.error("[Ranking] Canal de trigger não encontrado.");
     return null;
   }
+  console.log(`[Ranking] ✓ Canal de trigger encontrado: #${triggerChannel.name}`);
 
   const payload = {
     type: 2,
@@ -71,6 +72,7 @@ async function sendTopCommand(client) {
     analytics_location: "slash_ui"
   };
 
+  console.log("[Ranking] Enviando comando /top via API...");
   await fetch('https://discord.com/api/v9/interactions', {
     method: 'POST',
     headers: {
@@ -80,22 +82,25 @@ async function sendTopCommand(client) {
     },
     body: JSON.stringify(payload)
   });
+  console.log("[Ranking] ✓ Comando enviado. Aguardando resposta do N0VA (máx. 30s)...");
 
   const filter = m => m.author.id === N0VA_BOT_ID;
   const collected = await triggerChannel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
     .catch(() => null);
 
   if (!collected || collected.size === 0) {
-    console.log("[Ranking] Tempo esgotado aguardando resposta.");
+    console.log("[Ranking] ⏱ Tempo esgotado aguardando resposta do N0VA.");
     return null;
   }
 
   let msg = collected.first();
+  console.log(`[Ranking] ✓ Resposta recebida (${msg.id}). Aguardando 2s para mensagem completa...`);
 
   await new Promise(resolve => setTimeout(resolve, 2000));
 
   try {
     msg = await triggerChannel.messages.fetch(msg.id);
+    console.log("[Ranking] ✓ Mensagem atualizada obtida.");
   } catch (err) {
     console.error("[Ranking] Erro ao buscar mensagem atualizada:", err);
   }
@@ -106,7 +111,9 @@ async function sendTopCommand(client) {
     components: msg.components
   };
 
-  await msg.delete().catch(e => console.error("Erro ao deletar msg:", e));
+  console.log("[Ranking] Deletando mensagem de trigger...");
+  await msg.delete().catch(e => console.error("[Ranking] Erro ao deletar msg:", e));
+  console.log("[Ranking] ✓ Mensagem deletada. Dados extraídos com sucesso.");
 
   return messageData;
 }

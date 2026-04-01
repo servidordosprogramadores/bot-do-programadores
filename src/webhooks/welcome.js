@@ -100,6 +100,7 @@ const payload = {
 };
 
 async function sendWebhook() {
+  console.log("[Welcome] Enviando mensagem de boas-vindas...");
   try {
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
@@ -108,12 +109,12 @@ async function sendWebhook() {
     });
 
     if (res.ok) {
-      console.log("Mensagem enviada com sucesso.");
+      console.log("[Welcome] ✓ Mensagem enviada com sucesso.");
     } else {
-      console.error("Falha ao enviar mensagem:", res.status, await res.text());
+      console.error("[Welcome] ✗ Falha ao enviar:", res.status, await res.text());
     }
   } catch (err) {
-    console.error("Erro ao enviar webhook:", err);
+    console.error("[Welcome] ✗ Erro ao enviar webhook:", err);
   }
 }
 

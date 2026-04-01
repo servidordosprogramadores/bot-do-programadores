@@ -14,11 +14,13 @@ const {
 const TARGET_CHANNEL_ID = process.env.RANKING_CHANNEL_ID;
 
 async function sendRankMessage(client, textRank, voiceRank) {
+  console.log(`[Ranking] Buscando canal de ranking ${TARGET_CHANNEL_ID}...`);
   const targetChannel = await client.channels.fetch(TARGET_CHANNEL_ID);
   if (!targetChannel) {
     console.error("[Ranking] Canal alvo não encontrado.");
     return;
   }
+  console.log(`[Ranking] ✓ Canal encontrado: #${targetChannel.name}`);
 
   const components = [
     new ContainerBuilder()
@@ -64,23 +66,28 @@ async function sendRankMessage(client, textRank, voiceRank) {
       ),
   ];
 
+  console.log("[Ranking] Buscando mensagem anterior do ranking...");
   const messages = await targetChannel.messages.fetch({ limit: 50 });
   const lastBotMsg = messages.find(m => m.author.id === client.user.id);
 
   if (lastBotMsg) {
+    console.log(`[Ranking] Mensagem anterior encontrada (${lastBotMsg.id}). Editando...`);
     await lastBotMsg.edit({
       content: "",
       components,
       flags: MessageFlags.IsComponentsV2,
       allowedMentions: { parse: [] },
     });
+    console.log("[Ranking] ✓ Ranking atualizado com sucesso.");
   } else {
+    console.log("[Ranking] Nenhuma mensagem anterior. Enviando nova mensagem...");
     await targetChannel.send({
       content: "",
       components,
       flags: MessageFlags.IsComponentsV2,
       allowedMentions: { parse: [] },
     });
+    console.log("[Ranking] ✓ Ranking enviado com sucesso.");
   }
 }
 

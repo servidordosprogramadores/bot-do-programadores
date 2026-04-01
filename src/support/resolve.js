@@ -42,15 +42,13 @@ async function handleSupportInteraction(interaction) {
 
       if (!interaction.replied && !interaction.deferred) {
         await interaction.reply({
-          flags: MessageFlags.IsComponentsV2,
+          flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
           components: [container],
-          ephemeral: true,
         });
       } else {
         await interaction.followUp({
-          flags: MessageFlags.IsComponentsV2,
+          flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
           components: [container],
-          ephemeral: true,
         });
       }
     } catch (e) {
@@ -60,8 +58,7 @@ async function handleSupportInteraction(interaction) {
 }
 
 async function createTicket(interaction) {
-  // await interaction.deferReply({ ephemeral: true });
-
+  console.log(`[Support] Criando ticket para ${interaction.user.tag} (tipo: ${interaction.values?.[0]})...`);
   const { guild, user, values } = interaction;
 
   // Ler variáveis de ambiente dentro da função para garantir que foram carregadas
@@ -78,6 +75,7 @@ async function createTicket(interaction) {
   );
 
   if (existingChannel) {
+    console.log(`[Support] Usuário ${user.tag} já possui ticket aberto: #${existingChannel.name}`);
     const container = new ContainerBuilder()
       .setAccentColor(parseInt(process.env.MAIN_COLOR))
       .addTextDisplayComponents(
@@ -87,9 +85,8 @@ async function createTicket(interaction) {
       );
 
     await interaction.reply({
-      flags: MessageFlags.IsComponentsV2,
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
       components: [container],
-      ephemeral: true,
     });
     return;
   }
@@ -124,12 +121,14 @@ async function createTicket(interaction) {
     }
   });
 
+  console.log(`[Support] Criando canal de ticket para ${user.tag}...`);
   const channel = await guild.channels.create({
     name: `ticket-${user.username}`,
     type: ChannelType.GuildText,
     parent: TICKETS_CATEGORY_ID,
     permissionOverwrites: permissionOverwrites,
   });
+  console.log(`[Support] ✓ Canal criado: #${channel.name} (${channel.id})`);
 
   const components = [
     new ContainerBuilder()
@@ -174,14 +173,15 @@ async function createTicket(interaction) {
       new TextDisplayBuilder().setContent(`Seu ticket foi criado em ${channel}.`)
     );
 
+  console.log(`[Support] ✓ Ticket criado com sucesso para ${user.tag}.`);
   await interaction.reply({
-    flags: MessageFlags.IsComponentsV2,
+    flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
     components: [successContainer],
-    ephemeral: true,
   });
 }
 
 async function closeTicket(interaction) {
+  console.log(`[Support] Fechando ticket ${interaction.channel.name} (solicitado por ${interaction.user.tag})...`);
   const { member, channel } = interaction;
   const CEO_ROLE_ID = process.env.CEO_ROLE_ID;
   const ADMINISTRADOR_ROLE_ID = process.env.ADMINISTRADOR_ROLE_ID;
@@ -194,6 +194,7 @@ async function closeTicket(interaction) {
   );
 
   if (!hasPermission) {
+    console.log(`[Support] ✗ ${interaction.user.tag} não tem permissão para fechar o ticket.`);
     const container = new ContainerBuilder()
       .setAccentColor(parseInt(process.env.MAIN_COLOR))
       .addTextDisplayComponents(
@@ -203,14 +204,15 @@ async function closeTicket(interaction) {
       );
 
     await interaction.reply({
-      flags: MessageFlags.IsComponentsV2,
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
       components: [container],
-      ephemeral: true,
     });
     return;
   }
 
+  console.log(`[Support] ✓ Deletando canal #${channel.name}...`);
   await channel.delete();
+  console.log(`[Support] ✓ Ticket fechado com sucesso.`);
 }
 
 module.exports = { handleSupportInteraction };

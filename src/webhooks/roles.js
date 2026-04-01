@@ -59,7 +59,7 @@ const payload = {
         },
         {
           "type": 10,
-          "content": "- <@&1363936413271331118> Cargo para **membros participativos** do servidor.\n-# Obtido ao atingir **nível 5 em voz** e **nível 3 em texto**.\n- <@&1381776837599952976> Cargo para membros com **alta participação** no servidor.\n-# Obtido ao atingir **nível 10 em voz** e **nível 5 em texto**.\n- <@&1409756076794187846> Cargo para quem **representa e divulga** o servidor.\n-# Obtido ao utilizar a** tag do servidor**. Confira o chat **<#1410072306021302344>**.\n- <@&1115446339661221980> Cargo para quem **impulsiona** o servidor.\n-# Obtido ao **impulsionar o servidor**. Confira o chat **<#1363964628639551498>**.\n- <@&1363939241486319788> Cargo destinado a **produtores de conteúdo**.\n-# Obtido ao ter um **canal ativo** no **YouTube**, **Instagram** ou **TikTok**. Chame um staff para receber seu cargo.\n- <@&1412567704556277780> Cargo para comunidades ou pessoas **parceiras** do servidor.\n-# Obtido ao **fechar alguma parceria com o servidor**.\n- <@&1412508454970589204> Cargo para membros que **ganharam sorteios** no servidor.\n-# Obtido ao **ganhar um sorteio**. Confira o chat **<#1408128835794374666>**.\n- <@&1395176432489070643> Cargo para **amigos** dos donos do servidor.\n-# **Não é possível** obter esse cargo."
+          "content": "- <@&1468076926651469966> Cargo para os 2 membros **mais ativos** do mês, tanto em chat quanto em call.\n-# Obtido ao ser atingir primeiro lugar no <#1454923683486367879>.\n- <@&1363936413271331118> Cargo para **membros participativos** do servidor.\n-# Obtido ao atingir **nível 5 em voz** e **nível 3 em texto**.\n- <@&1381776837599952976> Cargo para membros com **alta participação** no servidor.\n-# Obtido ao atingir **nível 10 em voz** e **nível 5 em texto**.\n- <@&1409756076794187846> Cargo para quem **representa e divulga** o servidor.\n-# Obtido ao utilizar a** tag do servidor**. Confira o chat **<#1410072306021302344>**.\n- <@&1115446339661221980> Cargo para quem **impulsiona** o servidor.\n-# Obtido ao **impulsionar o servidor**. Confira o chat **<#1363964628639551498>**.\n- <@&1363939241486319788> Cargo destinado a **produtores de conteúdo**.\n-# Obtido ao ter um **canal ativo** no **YouTube**, **Instagram** ou **TikTok**, e divulgue o servidor. Chame um staff para receber seu cargo.\n- <@&1412567704556277780> Cargo para comunidades ou pessoas **parceiras** do servidor.\n-# Obtido ao **fechar alguma parceria com o servidor**.\n- <@&1412508454970589204> Cargo para membros que **ganharam sorteios** no servidor.\n-# Obtido ao **ganhar um sorteio**. Confira o chat **<#1408128835794374666>**.\n- <@&1481067034073894992> Cargo para **alunos** do **[Acelera Dev](https://tinyurl.com/4ppx2kah)**.\n-# Obtido ao **se tornar aluno** do curso."
         }
       ]
     },
@@ -83,6 +83,7 @@ const payload = {
 };
 
 async function sendWebhook() {
+  console.log("[Roles] Enviando painel de cargos...");
   try {
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
@@ -91,12 +92,12 @@ async function sendWebhook() {
     });
 
     if (res.ok) {
-      console.log("Mensagem enviada com sucesso.");
+      console.log("[Roles] ✓ Mensagem enviada com sucesso.");
     } else {
-      console.error("Falha ao enviar mensagem:", res.status, await res.text());
+      console.error("[Roles] ✗ Falha ao enviar:", res.status, await res.text());
     }
   } catch (err) {
-    console.error("Erro ao enviar webhook:", err);
+    console.error("[Roles] ✗ Erro ao enviar webhook:", err);
   }
 }
 
