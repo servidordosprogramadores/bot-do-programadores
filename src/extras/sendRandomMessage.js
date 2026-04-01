@@ -75,8 +75,7 @@ let lastListIndex = -1;
 const lastMessageIndexes = new Array(lists.length).fill(-1);
 
 async function startRandomMessages(client) {
-  // const channelId = process.env.CHAT_CHANNEL_ID;
-  const channelId = "1487848055062528320";
+  const channelId = process.env.CHAT_CHANNEL_ID;
 
   console.log("[Random] Iniciando serviço de mensagens aleatórias...");
   console.log(`[Random] Listas carregadas: ${lists.length} (padrão + ${lists.length - 1} parceiros).`);
