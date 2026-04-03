@@ -51,13 +51,21 @@ client.once(Events.ClientReady, async (readyClient) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (interaction.isButton()) {
-    await handleTechButtonClick(interaction);
-    await handleSupportInteraction(interaction);
-  } else if (interaction.isStringSelectMenu()) {
-    await handleColorSelectClick(interaction);
-    await handleSupportInteraction(interaction);
+  try {
+    if (interaction.isButton()) {
+      await handleTechButtonClick(interaction);
+      await handleSupportInteraction(interaction);
+    } else if (interaction.isStringSelectMenu()) {
+      await handleColorSelectClick(interaction);
+      await handleSupportInteraction(interaction);
+    }
+  } catch (error) {
+    console.error("[Bot] Erro não tratado em InteractionCreate:", error);
   }
+});
+
+client.on("error", (error) => {
+  console.error("[Bot] Erro não tratado no client:", error);
 });
 
 client

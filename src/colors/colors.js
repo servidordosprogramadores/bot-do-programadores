@@ -13,6 +13,8 @@ const { setRole } = require("../techs/setRole");
 const { removeRole } = require("../techs/removeRole");
 require("dotenv").config();
 
+let channelWebhook = null;
+
 const PREMIUM_PERMISSION_ROLE_IDS = [
   process.env.CRIADOR_ROLE_ID,
   process.env.PARCEIRO_ROLE_ID,
@@ -225,7 +227,15 @@ async function handleColorSelectClick(interaction) {
   )
     return;
 
-  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+  try {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+  } catch (err) {
+    if (err.code === 10062) {
+      console.log("[Colors] Interação expirada, ignorando.");
+      return;
+    }
+    throw err;
+  }
 
   const selectedValue = interaction.values[0];
   const member = interaction.member;
@@ -357,20 +367,36 @@ async function handleColorSelectClick(interaction) {
 
 async function sendColorEmbed(client) {
   try {
-    const colorsChannel = await client.channels.fetch(
-      process.env.COLORS_CHANNEL_ID
-    );
+    console.log(`[Colors] Buscando canal ${process.env.COLORS_CHANNEL_ID}...`);
+    const colorsChannel = await client.channels.fetch(process.env.COLORS_CHANNEL_ID);
+    console.log(`[Colors] ✓ Canal encontrado: #${colorsChannel.name}`);
 
+    console.log("[Colors] Buscando/criando webhook do canal...");
+    const webhooks = await colorsChannel.fetchWebhooks();
+    channelWebhook = webhooks.find((wh) => wh.owner?.id === client.user.id);
+    if (!channelWebhook) {
+      channelWebhook = await colorsChannel.createWebhook({ name: client.user.username });
+      console.log(`[Colors] ✓ Webhook criado: ${channelWebhook.id}`);
+    } else {
+      console.log(`[Colors] ✓ Webhook encontrado: ${channelWebhook.id}`);
+    }
+
+    console.log("[Colors] Limpando mensagens anteriores...");
     const messages = await colorsChannel.messages.fetch({ limit: 10 });
     if (messages.size > 0) {
       await colorsChannel.bulkDelete(messages);
+      console.log(`[Colors] ✓ ${messages.size} mensagem(ns) deletada(s).`);
+    } else {
+      console.log("[Colors] Nenhuma mensagem para limpar.");
     }
 
     const components = createColorsContainerV2();
 
-    await colorsChannel.send({
-      flags: MessageFlags.IsComponentsV2,
+    await channelWebhook.send({
+      username: "Escolha sua cor",
+      avatarURL: "https://i.postimg.cc/jC09KFp5/palette-fill.png",
       components,
+      flags: MessageFlags.IsComponentsV2,
       allowedMentions: { parse: [] },
     });
 

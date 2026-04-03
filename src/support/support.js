@@ -23,6 +23,16 @@ async function sendSupportEmbed(client) {
     }
     console.log(`[Support] ✓ Canal encontrado: #${channel.name}`);
 
+    console.log("[Support] Buscando/criando webhook do canal...");
+    const webhooks = await channel.fetchWebhooks();
+    let webhook = webhooks.find((wh) => wh.owner?.id === client.user.id);
+    if (!webhook) {
+      webhook = await channel.createWebhook({ name: client.user.username });
+      console.log(`[Support] ✓ Webhook criado: ${webhook.id}`);
+    } else {
+      console.log(`[Support] ✓ Webhook encontrado: ${webhook.id}`);
+    }
+
     console.log("[Support] Limpando mensagens anteriores...");
     const messages = await channel.messages.fetch({ limit: 10 });
     if (messages.size > 0) {
@@ -43,7 +53,7 @@ async function sendSupportEmbed(client) {
           )
         )
         .addTextDisplayComponents(
-          new TextDisplayBuilder().setContent("# Suporte")
+          new TextDisplayBuilder().setContent("# Painel de Suporte")
         )
         .addTextDisplayComponents(
           new TextDisplayBuilder().setContent(
@@ -90,12 +100,21 @@ async function sendSupportEmbed(client) {
               .setDescription(
                 "Bate-papo sobre parcerias, divulgação ou assuntos externos."
               )
-              .setEmoji("1455329059268722719")
+              .setEmoji("1455329059268722719"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("Outros")
+              .setValue("ticket_other")
+              .setDescription(
+                "Outras solicitações de suporte."
+              )
+              .setEmoji("1455354878430937221")
           )
       ),
     ];
 
-    await channel.send({
+    await webhook.send({
+      username: "Suporte do servidor",
+      avatarURL: "https://i.postimg.cc/4xygFMRb/phone-fill.png",
       flags: MessageFlags.IsComponentsV2,
       components: components,
     });

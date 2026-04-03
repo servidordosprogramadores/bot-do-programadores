@@ -13,6 +13,8 @@ const { setRole } = require("./setRole");
 const { removeRole } = require("./removeRole");
 require("dotenv").config();
 
+let channelWebhook = null;
+
 const TECHS = [
   {
     id: "javascript",
@@ -163,13 +165,20 @@ async function handleTechButtonClick(interaction) {
   const tech = TECHS.find((t) => t.id === techId);
   if (!tech) return;
 
-  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+  try {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+  } catch (err) {
+    if (err.code === 10062) {
+      console.log(`[Techs] Interação expirada para "${tech.name}", ignorando.`);
+      return;
+    }
+    throw err;
+  }
 
   try {
     const member = interaction.member;
     const hasRole = member.roles.cache.has(tech.roleId);
     const role = interaction.guild.roles.cache.get(tech.roleId);
-    console.log(`[Techs] ${member.user.tag} clicou em "${tech.name}" — ${hasRole ? "removendo" : "adicionando"} cargo.`);
 
     if (hasRole) {
       await removeRole(member, tech.roleId);
@@ -202,7 +211,7 @@ async function handleTechButtonClick(interaction) {
     await interaction.editReply({
       flags: MessageFlags.IsComponentsV2,
       components: [container],
-    });
+    }).catch(() => { });
   }
 }
 
@@ -214,6 +223,16 @@ async function sendTechLayoutMessage(client) {
     );
     console.log(`[Techs] ✓ Canal encontrado: #${techsChannel.name}`);
 
+    console.log("[Techs] Buscando/criando webhook do canal...");
+    const webhooks = await techsChannel.fetchWebhooks();
+    channelWebhook = webhooks.find((wh) => wh.owner?.id === client.user.id);
+    if (!channelWebhook) {
+      channelWebhook = await techsChannel.createWebhook({ name: client.user.username });
+      console.log(`[Techs] ✓ Webhook criado: ${channelWebhook.id}`);
+    } else {
+      console.log(`[Techs] ✓ Webhook encontrado: ${channelWebhook.id}`);
+    }
+
     console.log("[Techs] Limpando mensagens anteriores...");
     const messages = await techsChannel.messages.fetch({ limit: 10 });
     if (messages.size > 0) {
@@ -224,9 +243,11 @@ async function sendTechLayoutMessage(client) {
     }
 
     const components = createTechsLayoutV2();
-    await techsChannel.send({
+    await channelWebhook.send({
+      username: "Escolha suas tecnologias",
+      avatarURL: "https://i.postimg.cc/d1hG6tLd/lightning-fill.png",
+      components,
       flags: MessageFlags.IsComponentsV2,
-      components: components,
     });
 
     console.log("[Techs] Painel enviado com sucesso!");
