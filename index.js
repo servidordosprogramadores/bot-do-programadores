@@ -28,10 +28,6 @@ const client = new Client({
 
 client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Bot conectado como ${readyClient.user.tag}`);
-  readyClient.user.setActivity("🧑‍💻 Codando...", {
-    type: ActivityType.Streaming,
-    url: "https://www.twitch.tv/programadores",
-  });
 
   try {
     const guild = readyClient.guilds.cache.first();
