@@ -11,6 +11,7 @@ const {
 const { sendSupportEmbed } = require("./src/support/support");
 const { handleSupportInteraction } = require("./src/support/resolve");
 const { startRandomMessages } = require("./src/extras/sendRandomMessage");
+const { sendEmbassadorPanel, handleEmbassadorButton } = require("./src/extras/embassador");
 const ranking = require("./src/ranking/ranking");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -39,6 +40,7 @@ client.once(Events.ClientReady, async (readyClient) => {
     await sendTechLayoutMessage(readyClient);
     await sendColorEmbed(readyClient);
     await sendSupportEmbed(readyClient);
+    await sendEmbassadorPanel(readyClient);
     await startRandomMessages(readyClient);
     ranking(readyClient);
   } catch (error) {
@@ -51,6 +53,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isButton()) {
       await handleTechButtonClick(interaction);
       await handleSupportInteraction(interaction);
+      await handleEmbassadorButton(interaction);
     } else if (interaction.isStringSelectMenu()) {
       await handleColorSelectClick(interaction);
       await handleSupportInteraction(interaction);
