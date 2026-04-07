@@ -1,4 +1,4 @@
-const LINE_REGEX = /(?:🔸|🔹)\s*\|\s*#(\d+)\s*(<@\d+>)\s*-\s*XP:\s*\*\*(\d+)\*\*\s*(?:`\|`|\|)\s*Level:\s*\*\*(\d+)\*\*/;
+const LINE_REGEX = /(?:🔸|🔹)\s*\*?\|?\s*\*?#(\d+)\*?\s*(<@!?\d+>)\s*-\s*XP:\s*\*\*(\d+)\*\*\s*`?\|`?\s*Level:\s*\*\*(\d+)\*\*/;
 
 const extractTextFromComponents = (components) => {
   let text = "";
@@ -63,6 +63,9 @@ function parseRankingMessage(messageData) {
   }
   const textRank = parseSection(fullText, "TOP TEXT");
   const voiceRank = parseSection(fullText, "TOP VOICE");
+
+  console.log("[Ranking] Seção TOP TEXT extraída:", textRank);
+  console.log("[Ranking] Seção TOP VOICE extraída:", voiceRank);
 
   return { textRank, voiceRank };
 }

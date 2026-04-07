@@ -82,28 +82,17 @@ async function sendTopCommand(client) {
     },
     body: JSON.stringify(payload)
   });
-  console.log("[Ranking] ✓ Comando enviado. Aguardando resposta do N0VA (máx. 30s)...");
+  console.log("[Ranking] ✓ Comando enviado. Aguardando 5s para N0VA responder...");
+  await new Promise(resolve => setTimeout(resolve, 5000));
 
-  const filter = m => m.author.id === N0VA_BOT_ID;
-  const collected = await triggerChannel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
-    .catch(() => null);
+  const messages = await triggerChannel.messages.fetch({ limit: 10 });
+  const msg = messages.find(m => m.author.id === N0VA_BOT_ID);
 
-  if (!collected || collected.size === 0) {
-    console.log("[Ranking] ⏱ Tempo esgotado aguardando resposta do N0VA.");
+  if (!msg) {
+    console.log("[Ranking] ✗ Mensagem do N0VA não encontrada após 5s.");
     return null;
   }
-
-  let msg = collected.first();
-  console.log(`[Ranking] ✓ Resposta recebida (${msg.id}). Aguardando 2s para mensagem completa...`);
-
-  await new Promise(resolve => setTimeout(resolve, 2000));
-
-  try {
-    msg = await triggerChannel.messages.fetch(msg.id);
-    console.log("[Ranking] ✓ Mensagem atualizada obtida.");
-  } catch (err) {
-    console.error("[Ranking] Erro ao buscar mensagem atualizada:", err);
-  }
+  console.log(`[Ranking] ✓ Mensagem encontrada (${msg.id}).`);
 
   const messageData = {
     content: msg.content,
@@ -111,7 +100,7 @@ async function sendTopCommand(client) {
     components: msg.components
   };
 
-  console.log("[Ranking] Deletando mensagem de trigger...");
+  console.log("[Ranking] Deletando mensagem do /top...");
   await msg.delete().catch(e => console.error("[Ranking] Erro ao deletar msg:", e));
   console.log("[Ranking] ✓ Mensagem deletada. Dados extraídos com sucesso.");
 

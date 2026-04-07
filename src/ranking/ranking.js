@@ -26,7 +26,7 @@ module.exports = (client) => {
   // Executa imediatamente ao iniciar
   runRankingLoop();
 
-  console.log("[Ranking] ✓ Loop agendado para executar a cada 10 minutos.");
-  // Executa a cada 10 minutos
-  setInterval(runRankingLoop, 600000);
+  console.log("[Ranking] ✓ Loop agendado para executar a cada 1 hora.");
+  // Executa a cada 1 hora
+  setInterval(runRankingLoop, 600000 * 6);
 };
