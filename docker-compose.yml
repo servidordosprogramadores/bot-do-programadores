@@ -7,3 +7,8 @@ services:
       - .env
     ports:
       - "${PORT:-80}:${PORT:-80}"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
