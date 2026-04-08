@@ -1,12 +1,10 @@
 services:
   bot:
-    build: .
+    image: ghcr.io/matheusaudibert/bot-dos-programadores:latest
     container_name: bot-dos-programadores
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "${PORT:-80}:${PORT:-80}"
     deploy:
       resources:
         limits:
