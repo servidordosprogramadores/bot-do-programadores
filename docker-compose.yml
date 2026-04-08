@@ -1,12 +1,13 @@
 services:
-  bot:
-    image: ghcr.io/matheusaudibert/bot-dos-programadores:latest
-    container_name: bot-dos-programadores
+  app:
+    build: .
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     env_file:
       - .env
     deploy:
       resources:
         limits:
           cpus: "0.5"
-          memory: 512M
+          memory: 256M

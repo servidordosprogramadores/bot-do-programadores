@@ -148,7 +148,7 @@ async function handleEmbassadorButton(interaction) {
 
 async function sendEmbassadorPanel(client) {
   try {
-    const channelId = process.env.EMBASSADIR_CHANNEL_ID;
+    const channelId = process.env.EMBASSADOR_CHANNEL_ID;
     console.log(`[Embassador] Buscando canal ${channelId}...`);
     const channel = await client.channels.fetch(channelId);
     console.log(`[Embassador] ✓ Canal encontrado: #${channel.name}`);
